@@ -6,7 +6,7 @@ The ud file configuration is a methode to manage your data in general.
 Implementation
 -
 
-# maven
+> maven
 ```xml
 
     <dependencies>
@@ -27,7 +27,7 @@ Implementation
 
 ```
 
-#gradle
+> gradle
 ```groovy
 repositories {
     maven {
