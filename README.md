@@ -1,6 +1,44 @@
-# ud-file-configuration
+ud-file-configuration
+-
 
-The ud file configuration is a methode to manage your user data or data in general.
+The ud file configuration is a methode to manage your data in general.
+
+Implementation
+-
+
+# maven
+```xml
+
+    <dependencies>
+        <dependency>
+            <groupId>de.ufomc</groupId>
+            <artifactId>ud-fileformate</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>repo</id>
+            <url>https://www.ufomc.de/repo/</url>
+        </repository>
+    </repositories>
+
+```
+
+#gradle
+```groovy
+repositories {
+    maven {
+        url "https://www.ufomc.de/repo/"
+    }
+}
+
+dependencies {
+    implementation 'de.ufomc:ud-fileformate:1.0.0'
+}
+```
 
 Usage
 -
