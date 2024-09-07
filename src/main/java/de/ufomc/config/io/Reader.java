@@ -20,7 +20,7 @@ public class Reader {
     private final String fileName;
 
     public Reader(String fileName) {
-        this.fileName = fileName + ".ud";
+        this.fileName = fileName;
         this.fileContent = readAllValuesFromFile();
     }
 

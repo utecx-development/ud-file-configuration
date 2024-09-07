@@ -15,10 +15,10 @@ public class Writer {
     @Getter
     private final Reader reader;
     protected final Map<String, TV> fileContent;
-    private String fileName;
+    private final String fileName;
 
-    public Writer(String fileName) {
-        this.fileName = fileName + ".ud";
+    public Writer(String name) {
+        this.fileName = name + ".ud";
 
         if (!new File(fileName).exists()){
             try (final PrintWriter writer = new PrintWriter(fileName)) {
