@@ -39,6 +39,33 @@ dependencies {
 }
 ```
 
+Why use?
+-
+
+The reason to use the ud file formate is simple. Just take a look at the bench mark:
+
+ud file formate: 33ms
+json: 78ms
+
+They both hat the same task but ud was more than double as fast. 
+Thats because the data is beeing cached at ud file formate.
+I know some of you might tell its fake but test it out your self with the following bench mark class:
+
+```java
+package org.example;
+
+public class Benchmark {
+
+    public static long benchMark(Runnable runnable) {
+
+        long start = System.nanoTime();
+        runnable.run();
+        return System.nanoTime() - start;
+
+    }
+
+}```
+
 Usage
 -
 
