@@ -1,5 +1,4 @@
-ud-file-configuration
--
+# UfoData (ud) - file formate 
 
 The ud file configuration is a methode to manage your data in general.
 
