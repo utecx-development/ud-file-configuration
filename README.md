@@ -42,6 +42,10 @@ dependencies {
 Usage
 -
 
+> importante
+
+- Every complexe object just like user data wich you want to save to your file has to extend the UfObject class or else it wont be formatted correctly
+
 ```java
 
         //init your writer and reader
