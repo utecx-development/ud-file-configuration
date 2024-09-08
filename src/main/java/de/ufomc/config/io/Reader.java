@@ -26,7 +26,7 @@ public class Reader {
 
     public <T> T get(String key, Class<T> clazz) {
 
-        if (!fileContent.containsKey(key)){
+        if (!fileContent.containsKey(key)) {
             throw new RuntimeException("The key " + key + " was not found");
         }
 
@@ -40,7 +40,7 @@ public class Reader {
             throw new RuntimeException("Wrong methode! Please use getList or getMap.");
         }
 
-        if (ObjectCheck.isPrimitive(clazz)){
+        if (ObjectCheck.isPrimitive(clazz)) {
             return formateObject(clazz, o);
         }
 
@@ -57,7 +57,13 @@ public class Reader {
 
             while ((line = reader.readLine()) != null) {
 
-                if (line.startsWith("#")){
+                System.out.println(line);
+
+                if (line.isEmpty()) {
+                    continue;
+                }
+
+                if (line.startsWith("#")) {
                     continue;
                 }
 
@@ -66,9 +72,9 @@ public class Reader {
                 String value = line.substring(line.split("=")[0].length() + 1).replace(";", "");
                 String key = line.substring(type.length() + 1, line.length() - value.length() - 2);
 
-                if (type.startsWith("map<")){
+                if (type.startsWith("map<")) {
                     map.put(key, new TV(type, Maps.formateMap(type, value)));
-                } else if (type.startsWith("list<")){
+                } else if (type.startsWith("list<")) {
                     map.put(key, new TV(type, Lists.formateList(type, value)));
                 } else {
                     map.put(key, new TV(type, objFromString(type, value)));
@@ -98,17 +104,43 @@ public class Reader {
 
     }
 
-    public <T> List<T> getList(String key, Class<T> clazz) {
+    public <K, V> Map<K, V> getMap(String key, Class<K> keyClass, Class<V> valueClass) {
 
         if (!fileContent.containsKey(key)) {
             throw new RuntimeException("There was no list for the key: " + key + " in: " + fileName);
         }
 
-        if (!(fileContent.get(key).getValue() instanceof List<?> list)) {
+        List<K> keys = getTempList(keyClass, key, true);
+        List<V> values = getTempList(valueClass, key, false);
+        Map<K, V> map = new HashMap<>();
+
+        if (keys.size() != values.size()) {
+            throw new RuntimeException("An error appeared during the encoding of " + key + ". Please report this error to our staff team");
+        }
+
+        for (int i = 0; i != keys.size(); i++) {
+            map.put(keys.get(i), values.get(i));
+        }
+
+        return map;
+
+    }
+
+    private <T> List<T> getTempList(Class<T> clazz, String key, boolean isKey) {
+
+        if (!(fileContent.get(key).getValue() instanceof Map<?, ?> map)) {
             throw new RuntimeException("The key: " + key + " is not an instance of a List but a " + fileContent.get(key).getValue().getClass().getSimpleName());
         }
 
-        if (ObjectCheck.isPrimitive(clazz)){
+        List<?> list;
+
+        if (isKey) {
+            list = new ArrayList<>(map.keySet());
+        } else {
+            list = new ArrayList<>(map.values());
+        }
+
+        if (ObjectCheck.isPrimitive(clazz)) {
 
             final List<T> objList = new ArrayList<>();
 
@@ -119,7 +151,38 @@ public class Reader {
             return objList;
 
         } else {
-            if (!clazz.isInstance(list.getFirst())){
+
+            if (!clazz.isInstance(list.getFirst())) {
+                throw new RuntimeException("The class " + clazz.getName() + " is not an instance of " + fileContent.get(key).getValue().getClass().getName());
+            }
+
+            return (List<T>) list;
+
+        }
+    }
+
+    public <T> List<T> getList(String key, Class<T> clazz) {
+
+        if (!fileContent.containsKey(key)) {
+            throw new RuntimeException("There was no list for the key: " + key + " in: " + fileName);
+        }
+
+        if (!(fileContent.get(key).getValue() instanceof List<?> list)) {
+            throw new RuntimeException("The key: " + key + " is not an instance of a List but a " + fileContent.get(key).getValue().getClass().getSimpleName());
+        }
+
+        if (ObjectCheck.isPrimitive(clazz)) {
+
+            final List<T> objList = new ArrayList<>();
+
+            for (Object t : list) {
+                objList.add(formateObject(clazz, t));
+            }
+
+            return objList;
+
+        } else {
+            if (!clazz.isInstance(list.getFirst())) {
                 throw new RuntimeException("The class " + clazz.getName() + " is not an instance of " + fileContent.get(key).getValue().getClass().getName());
             }
             return (List<T>) fileContent.get(key).getValue();
@@ -136,7 +199,7 @@ public class Reader {
 
                 for (Field oField : o.getClass().getDeclaredFields()) {
 
-                    if (field.getName().equals(oField.getName())){
+                    if (field.getName().equals(oField.getName())) {
 
                         oField.setAccessible(true);
                         field.setAccessible(true);

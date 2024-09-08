@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -55,8 +56,18 @@ public class Writer {
 
             s.append(value.getType())
                     .append(":").append(key)
-                    .append("=").append(value.getValue().toString())
-                    .append(";\n");
+                    .append("=");
+
+            if (value.getType().startsWith("map")){
+
+                s.append(value.getValue().toString()
+                        .replace("=", "-").replace(" ", ""));
+
+            } else {
+                s.append(value.getValue().toString());
+            }
+
+            s.append(";\n");
 
         });
 
@@ -64,12 +75,21 @@ public class Writer {
 
     }
 
+    //private String buildMap(Object o){
+    //
+    //}
+
     private String type(Object o) {
 
         return switch (o) {
             case String s -> "string";
             case Integer i -> "int";
             case Float f -> "float";
+            case Map<?, ?> m -> {
+                Object k = new ArrayList<>(m.keySet()).getFirst();
+                Object v = new ArrayList<>(m.values()).getFirst();
+                yield "map<" + type(k) + "," + type(v) + ">";
+            }
             case List<?> l -> "list<" + type(l.getFirst()) + ">";
             default -> {
                 if (UfObject.class.isAssignableFrom(o.getClass())){
