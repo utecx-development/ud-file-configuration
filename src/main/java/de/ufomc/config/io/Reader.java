@@ -55,9 +55,9 @@ public class Reader {
             String line;
             Map<String, TV> map = new HashMap<>();
 
-            while ((line = reader.readLine()) != null) {
+            //941940.7
 
-                System.out.println(line);
+            while ((line = reader.readLine()) != null) {
 
                 if (line.isEmpty()) {
                     continue;
@@ -82,6 +82,35 @@ public class Reader {
             }
 
             return map;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    protected String readFileAsString() {
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+
+            String line;
+            StringBuilder s = new StringBuilder();
+
+            while ((line = reader.readLine()) != null) {
+
+                if (line.isEmpty()) {
+                    continue;
+                }
+
+                if (line.startsWith("#")) {
+                    continue;
+                }
+
+                s.append(line);
+
+            }
+
+            return s.toString();
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -218,6 +247,100 @@ public class Reader {
         } catch (Exception e) {
             throw new RuntimeException("A probleme appeared parsing " + clazz.getName(), e);
         }
+    }
+
+    public String toJson() {
+
+        try {
+            String input = readFileAsString();
+
+            input = input.trim();
+
+            String[] entries = input.split(";");
+
+            // JSON-String Aufbau
+            StringBuilder jsonBuilder = new StringBuilder();
+            jsonBuilder.append("{");
+
+            for (int i = 0; i < entries.length; i++) {
+                String entry = entries[i].trim();
+                if (entry.isEmpty()) continue;
+
+                String[] keyValue = entry.split(":")[1].split("=", 2);
+                String key = keyValue[0].trim();
+                String value = keyValue[1].trim();
+
+                jsonBuilder.append("\"").append(key).append("\": ");
+
+                if (value.startsWith("{") && value.endsWith("}")) {
+                    jsonBuilder.append(parseObject(value));
+                } else if (value.startsWith("[") && value.endsWith("]")) {
+                    jsonBuilder.append(parseList(value));
+                } else {
+                    jsonBuilder.append("\"").append(value).append("\"");
+                }
+
+                if (i < entries.length - 1) {
+                    jsonBuilder.append(", ");
+                }
+            }
+
+            jsonBuilder.append("}");
+            return jsonBuilder.toString();
+
+        } catch (Exception e) {
+            throw new RuntimeException("A probleme appeared during the json formatting", e);
+        }
+
+
+    }
+
+    private static String parseObject(String input) {
+        input = input.substring(1, input.length() - 1).trim();
+        String[] entries = input.split(",");
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("{");
+
+        for (int i = 0; i < entries.length; i++) {
+            String entry = entries[i].trim();
+            String[] keyValue = entry.split("=", 2);
+            String key = keyValue[0].trim();
+            String value = keyValue[1].trim();
+
+            jsonBuilder.append("\"").append(key).append("\": ");
+
+            if (value.startsWith("[") && value.endsWith("]")) {
+                jsonBuilder.append(parseList(value));
+            } else {
+                jsonBuilder.append("\"").append(value).append("\"");
+            }
+
+            if (i < entries.length - 1) {
+                jsonBuilder.append(", ");
+            }
+        }
+
+        jsonBuilder.append("}");
+        return jsonBuilder.toString();
+    }
+
+    private static String parseList(String input) {
+        input = input.substring(1, input.length() - 1).trim();
+        String[] values = input.split(",");
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("[");
+
+        for (int i = 0; i < values.length; i++) {
+            String value = values[i].trim();
+            jsonBuilder.append("\"").append(value).append("\"");
+
+            if (i < values.length - 1) {
+                jsonBuilder.append(", ");
+            }
+        }
+
+        jsonBuilder.append("]");
+        return jsonBuilder.toString();
     }
 
 }
