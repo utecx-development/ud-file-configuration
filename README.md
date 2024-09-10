@@ -1,4 +1,4 @@
-# UfoData (ud) - file formate 
+# UfoData - A new, blazing fast file format
 
 The ud file configuration is a methode to manage your data in general.
 
@@ -42,7 +42,7 @@ dependencies {
 Usage
 -
 
-> importante
+> important
 
 - Every complexe object just like user data wich you want to save to your file has to extend the UfObject class or else it wont be formatted correctly
 
