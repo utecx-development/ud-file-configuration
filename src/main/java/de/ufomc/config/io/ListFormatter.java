@@ -2,11 +2,12 @@ package de.ufomc.config.io;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class Lists {
+@UtilityClass
+public final class ListFormatter {
 
-    public static List<?> formateList(String type, String value) {
+    @NonNull
+    public static List<?> formatList(String type, final String value) {
         type = type.replace("<" , "")
                 .replace(">", "")
                 .replace("list", "");
@@ -16,14 +17,10 @@ public class Lists {
                 .replace("\"", "")
                 .split(",");
 
-        List<Object> list = new ArrayList<>();
-
+        final List<Object> list = new ArrayList<>();
         for (int i = 0; i != entries.length; i++){
             list.add(Reader.objFromString(type, entries[i]));
         }
-
         return list;
-
     }
-
 }

@@ -16,39 +16,41 @@ public final class Benchmark {
         return runtime.totalMemory() - runtime.freeMemory(); //subtract free memory from total
     }
 
+    /**
+     * Counts the amount of objects removed by the GC
+     * @return gc count
+     */
     private static long getGCCount() {
+        final List<GarbageCollectorMXBean> beans = ManagementFactory.getGarbageCollectorMXBeans();
         long totalGCCount = 0;
-        final List<GarbageCollectorMXBean> gcBeans = ManagementFactory.getGarbageCollectorMXBeans();
-        for (GarbageCollectorMXBean gcBean : gcBeans) {
-            long count = gcBean.getCollectionCount();
-            if (count != -1) {
+        for (final GarbageCollectorMXBean bean : beans) {
+            final long count = bean.getCollectionCount();
+            if (count >= 0) {
                 totalGCCount += count;
             }
         }
         return totalGCCount;
     }
 
-    public static BenchmarkResult run(Runnable runnable, long iterations) {
-        long memoryUsedBefore = getUsedMemory();
-
+    @NonNull
+    public static BenchmarkResult run(final Runnable runnable, final long iterations) {
+        final long memoryUsedBefore = getUsedMemory(); //runtime memory before the benchmark
         long peakMemoryUsed = memoryUsedBefore;
-        long startTime = System.nanoTime();
 
-        for (long i = 0; i < iterations; i++) {
+        //run tests & track time
+        final long startTime = System.nanoTime();
+        for (int i = 0; i < iterations; i++) {
             runnable.run();
 
-            long currentUsedMemory = getUsedMemory();
-            if (currentUsedMemory > peakMemoryUsed) {
-                peakMemoryUsed = currentUsedMemory;
+            final long usedMemory = getUsedMemory();
+            if (usedMemory > peakMemoryUsed) { //change if memory limit has been stepped up
+                peakMemoryUsed = usedMemory;
             }
         }
+        final long totalTime = System.nanoTime() - startTime; //benchmark duration in nanoseconds
 
-        long endTime = System.nanoTime();
-        long memoryUsedAfter = getUsedMemory();
-
-        long totalTime = endTime - startTime;
+        final long memoryUsedAfter = getUsedMemory(); //runtime memory after the benchmark
 
         return new BenchmarkResult(totalTime, iterations, memoryUsedBefore, memoryUsedAfter);
-
     }
 }

@@ -1,11 +1,16 @@
 # UfoData - A new, blazing fast file format
 
-The ud file configuration is a methode to manage your data in general.
+Developed to provide a simple solution for java developers to handle their configuration and data using flatfile,
+UfoData strives to provide exactly that. UfoData is:
+- ⚡️ Fast - Due to using an in-built-cache, it's even faster than GSON!
+- 🍎 Simple - Just create a writer for your files and start working with them.
+- 🌈 Unique - With a new & easy to understand format, UD's format is really nice to write & read
+- 🔄 Updated and well maintained - Make use of new features regularly :D
 
 Implementation
 -
 
-> maven
+> Maven
 ```xml
 
     <dependencies>
@@ -26,7 +31,7 @@ Implementation
 
 ```
 
-> gradle
+> Gradle (Groovy DSL)
 ```groovy
 repositories {
     maven {
@@ -39,10 +44,21 @@ dependencies {
 }
 ```
 
+> Gradle (Kotlin DSL)
+```kotlin
+repositories {
+    maven("https://www.ufomc.de/repo/")
+}
+
+dependencies {
+    implementation("de.ufomc", "ud-fileformate", "1.0.1")
+}
+```
+
 Usage
 -
 
-> important
+> Important
 
 - Every complex object just like user data which you want to save to your file has to extend the UfObject class or else it wont be formatted correctly
 

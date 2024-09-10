@@ -1,7 +1,7 @@
 package de.ufomc.config.io;
 
-import de.ufomc.config.core.UfObject;
-import de.ufomc.config.pre.TV;
+import de.ufomc.config.core.UDObject;
+import de.ufomc.config.pre.TypeValue;
 import lombok.Getter;
 
 import java.io.File;
@@ -11,11 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
-public class Writer {
-
-    @Getter
-    private final Reader reader;
-    protected final Map<String, TV> fileContent;
+public final class Writer {
+    @Getter private final Reader reader;
+    protected final Map<String, TypeValue> fileContent;
     private final String fileName;
 
     public Writer(String name) {
@@ -34,16 +32,22 @@ public class Writer {
     }
 
     public void write(String key, Object o){
-        this.fileContent.put(key, new TV(type(o), o));
+        this.fileContent.put(key, new TypeValue(type(o), o));
     }
 
     public void save() {
-        Executors.newFixedThreadPool(2).execute(() -> {
+
+        //Todo: For optimization reasons, this Threadpool should not be created new on every occuring write.
+        //It should instead be handled by a custom ThreadPoolExecutor with a limited amount of threads & a capped queue length
+        //We need to make this an attribute for this writer.
+        //Also might want to log in a more united way
+
+        Executors.newFixedThreadPool(2).execute(() -> { //this is very performance unoptimized!
             try (final PrintWriter writer = new PrintWriter(fileName)) {
                 writer.print(buildFile());
                 writer.flush();
-            } catch (Exception e) {
-                throw new RuntimeException("A probleme appeared during the save process of " + this.fileName + " " + e);
+            } catch (final Exception exception) {
+                throw new RuntimeException("A problem occurred while saving to " + this.fileName + "!", exception);
             }
         });
     }
@@ -70,18 +74,12 @@ public class Writer {
             s.append(";\n");
 
         });
-
         return s.toString();
-
     }
 
-    //private String buildMap(Object o){
-    //
-    //}
-
-    private String type(Object o) {
-
-        return switch (o) {
+    @NonNull
+    private String type(final Object object) {
+        return switch (object) {
             case String s -> "string";
             case Integer i -> "int";
             case Float f -> "float";
@@ -92,12 +90,12 @@ public class Writer {
             }
             case List<?> l -> "list<" + type(l.getFirst()) + ">";
             default -> {
-                if (UfObject.class.isAssignableFrom(o.getClass())){
-                    yield "object";
+                //check if class extends UDObject (required for working with custom objects)
+                if (!UDObject.class.isAssignableFrom(object.getClass())) {
+                    throw new IllegalStateException("Unsupported type: " + object.getClass().getSimpleName());
                 }
-                throw new RuntimeException("unsupported type " + o.getClass().getSimpleName());
+                yield "object";
             }
         };
     }
-
 }

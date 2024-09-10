@@ -1,6 +1,6 @@
 package de.ufomc.config.core;
 
-public class Equals {
+public class CheckEquals {
 
     //all have to be equivalent to return true
     public static boolean allEqual(String s, String... equivalents) {

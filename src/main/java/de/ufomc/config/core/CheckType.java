@@ -3,11 +3,16 @@ package de.ufomc.config.core;
 import java.util.List;
 import java.util.Map;
 
-public class ObjectCheck {
+@UtilityClass
+public final class CheckType {
 
-    public static boolean isListOrMap(Class<?> type) {
-        return type == Map.class ||
-                type == List.class;
+    /**
+     * Checks if a given type is a map or a list
+     * @param type the given class
+     * @return true if it's a map or a list
+     */
+    public static boolean isListOrMap(final Class<?> type) {
+        return type == Map.class || type == List.class;
     }
 
     public static boolean isPrimitive(Class<?> type) {

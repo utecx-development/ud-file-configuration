@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class TV {
+public class TypeValue {
 
     private String type;
     private Object value;
