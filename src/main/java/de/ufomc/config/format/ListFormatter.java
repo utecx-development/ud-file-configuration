@@ -1,4 +1,8 @@
-package de.ufomc.config.io;
+package de.ufomc.config.format;
+
+import de.ufomc.config.io.Reader;
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +16,7 @@ public final class ListFormatter {
                 .replace(">", "")
                 .replace("list", "");
 
-        String[] entries = value.replace("[","")
+        final String[] entries = value.replace("[","")
                 .replace("]", "")
                 .replace("\"", "")
                 .split(",");
@@ -21,6 +25,7 @@ public final class ListFormatter {
         for (int i = 0; i != entries.length; i++){
             list.add(Reader.objFromString(type, entries[i]));
         }
+
         return list;
     }
 }
