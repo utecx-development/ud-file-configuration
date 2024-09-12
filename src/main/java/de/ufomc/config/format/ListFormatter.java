@@ -29,12 +29,13 @@ public final class ListFormatter {
         final String[] entries = value.replace("[","")
                 .replace("]", "")
                 .replace("\"", "")
+                .trim()
                 .split(",");
 
         //loop through entries and parse objects
         final List<Object> list = new ArrayList<>();
         for (int i = 0; i != entries.length; i++){
-            list.add(ObjectFormatter.objFromString(type, entries[i])); //most cost expensive
+            list.add(ObjectFormatter.objFromString(type, entries[i].trim())); //most cost expensive
         }
 
         return list;
