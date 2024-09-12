@@ -5,7 +5,7 @@ UfoData strives to provide exactly that. UfoData is:
 - ⚡️ Fast - Due to using an in-built-cache, it's even faster than GSON!
 - 🍎 Simple - Just create a config for your files and start working with them.
 - 🌈 Unique - With a new & easy to understand format, UD's format is really nice to write & read
-- ❗ Responsible - In case you find any bug or a feture you dont want to be missing you can always tell us in our discord https://discord.gg/gzxrub5ABQ
+- ❗ Responsible - In case you find any bug or a feature you dont want to be missing you can always tell us in our discord https://discord.gg/gzxrub5ABQ
 - 🔄 Updated and well maintained - Make use of new features regularly :D
 
 Implementation
