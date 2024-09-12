@@ -93,6 +93,15 @@ Usage
 
 ```
 
+What does my data look like when formated?
+-
+```
+string:hello=world;
+list<string>:list=[hello, world, ...];
+map<string,string>:map={hello-Iamamap};
+object:object={string:name=Tom,int:age=13};
+```
+
 Why use?
 -
 
