@@ -1,10 +1,14 @@
 package de.ufomc.config.core;
 
+import de.ufomc.config.checks.CheckType;
+import lombok.NonNull;
+
 import java.lang.reflect.Field;
 
-public class UfObject {
+public abstract class UDObject {
 
     @Override
+    @NonNull
     public String toString() {
         StringBuilder s = new StringBuilder();
 
@@ -23,7 +27,7 @@ public class UfObject {
 
                 String valueRepresentation;
 
-                if (fieldValue != null && ObjectCheck.isPrimitive(field.getType()) && !(fieldValue instanceof String)) {
+                if (fieldValue != null && CheckType.isPrimitive(field.getType()) && !(fieldValue instanceof String)) {
                     valueRepresentation = fieldValue.toString();
                 } else {
                     valueRepresentation = fieldValue != null ? fieldValue.toString() : "null";
@@ -43,10 +47,7 @@ public class UfObject {
                 throw new RuntimeException(e);
             }
         }
-
         s.append("}");
         return s.toString();
-
     }
-
 }

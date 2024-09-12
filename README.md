@@ -1,18 +1,23 @@
-# UfoData (ud) - file formate 
+# UfoData - A new, blazing fast file format
 
-The ud file configuration is a methode to manage your data in general.
+Developed to provide a simple solution for java developers to handle their configuration and data using flatfile,
+UfoData strives to provide exactly that. UfoData is:
+- ⚡️ Fast - Due to using an in-built-cache, it's even faster than GSON!
+- 🍎 Simple - Just create a writer for your files and start working with them.
+- 🌈 Unique - With a new & easy to understand format, UD's format is really nice to write & read
+- 🔄 Updated and well maintained - Make use of new features regularly :D
 
 Implementation
 -
 
-> maven
+> Maven
 ```xml
 
     <dependencies>
         <dependency>
             <groupId>de.ufomc</groupId>
-            <artifactId>ud-fileformate</artifactId>
-            <version>1.0.1</version>
+            <artifactId>ud-fileformat</artifactId>
+            <version>0.2.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -26,7 +31,7 @@ Implementation
 
 ```
 
-> gradle
+> Gradle (Groovy DSL)
 ```groovy
 repositories {
     maven {
@@ -35,16 +40,27 @@ repositories {
 }
 
 dependencies {
-    implementation 'de.ufomc:ud-fileformate:1.0.1'
+    implementation 'de.ufomc:ud-fileformat:0.2.0'
+}
+```
+
+> Gradle (Kotlin DSL)
+```kotlin
+repositories {
+    maven("https://www.ufomc.de/repo/")
+}
+
+dependencies {
+    implementation("de.ufomc", "ud-fileformat", "0.2.0")
 }
 ```
 
 Usage
 -
 
-> importante
+> Important
 
-- Every complexe object just like user data wich you want to save to your file has to extend the UfObject class or else it wont be formatted correctly
+- Every complex object just like user data which you want to save to your file has to extend the UfObject class or else it wont be formatted correctly
 
 ```java
 
@@ -83,14 +99,20 @@ I know some of you might tell its fake but test it out your self with the follow
 ```java
 package org.example;
 
-public class Benchmark {
+import de.ufomc.config.benchmark.Benchmark;
+import de.ufomc.config.benchmark.BenchmarkResult;
 
-    public static long benchMark(Runnable runnable) {
+public class CustomBenchmark {
 
-        long start = System.nanoTime();
-        runnable.run();
-        return System.nanoTime() - start;
+    public static void main(final String[] args) {
 
+        Runnable runnable = //your test here
+        int iterations = //how many times do you want it to run?
+                
+        //actually run the benchmark        
+        BenchmarkResult result = Benchmark.run(runnable, iterations);
+        System.out.println(result.toString()); //print
+        
     }
 
 }

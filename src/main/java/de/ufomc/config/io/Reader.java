@@ -1,7 +1,9 @@
 package de.ufomc.config.io;
 
-import de.ufomc.config.core.ObjectCheck;
-import de.ufomc.config.pre.TV;
+import de.ufomc.config.checks.CheckType;
+import de.ufomc.config.format.ListFormatter;
+import de.ufomc.config.format.MapFormatter;
+import de.ufomc.config.pre.TypeValue;
 import lombok.Getter;
 
 import java.io.BufferedReader;
@@ -16,7 +18,7 @@ import java.util.Map;
 public class Reader {
 
     @Getter
-    private final Map<String, TV> fileContent;
+    private final Map<String, TypeValue> fileContent;
     private final String fileName;
 
     public Reader(String fileName) {
@@ -36,11 +38,11 @@ public class Reader {
             throw new RuntimeException("The key " + key + " is not an instance of " + clazz.getName());
         }
 
-        if (ObjectCheck.isListOrMap(clazz)) {
+        if (CheckType.isListOrMap(clazz)) {
             throw new RuntimeException("Wrong methode! Please use getList or getMap.");
         }
 
-        if (ObjectCheck.isPrimitive(clazz)) {
+        if (CheckType.isPrimitive(clazz)) {
             return formateObject(clazz, o);
         }
 
@@ -48,12 +50,12 @@ public class Reader {
 
     }
 
-    protected Map<String, TV> readAllValuesFromFile() {
+    protected Map<String, TypeValue> readAllValuesFromFile() {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
 
             String line;
-            Map<String, TV> map = new HashMap<>();
+            Map<String, TypeValue> map = new HashMap<>();
 
             //941940.7
 
@@ -73,11 +75,11 @@ public class Reader {
                 String key = line.substring(type.length() + 1, line.length() - value.length() - 2);
 
                 if (type.startsWith("map<")) {
-                    map.put(key, new TV(type, Maps.formateMap(type, value)));
+                    map.put(key, new TypeValue(type, MapFormatter.formatMap(type, value)));
                 } else if (type.startsWith("list<")) {
-                    map.put(key, new TV(type, Lists.formateList(type, value)));
+                    map.put(key, new TypeValue(type, ListFormatter.formatList(type, value)));
                 } else {
-                    map.put(key, new TV(type, objFromString(type, value)));
+                    map.put(key, new TypeValue(type, objFromString(type, value)));
                 }
             }
 
@@ -118,7 +120,7 @@ public class Reader {
 
     }
 
-    protected static Object objFromString(String type, String value) {
+    public static Object objFromString(String type, String value) {
 
         return switch (type) {
             case "string", "object" -> value;
@@ -169,7 +171,7 @@ public class Reader {
             list = new ArrayList<>(map.values());
         }
 
-        if (ObjectCheck.isPrimitive(clazz)) {
+        if (CheckType.isPrimitive(clazz)) {
 
             final List<T> objList = new ArrayList<>();
 
@@ -200,7 +202,7 @@ public class Reader {
             throw new RuntimeException("The key: " + key + " is not an instance of a List but a " + fileContent.get(key).getValue().getClass().getSimpleName());
         }
 
-        if (ObjectCheck.isPrimitive(clazz)) {
+        if (CheckType.isPrimitive(clazz)) {
 
             final List<T> objList = new ArrayList<>();
 
@@ -245,7 +247,7 @@ public class Reader {
 
 
         } catch (Exception e) {
-            throw new RuntimeException("A probleme appeared parsing " + clazz.getName(), e);
+            throw new RuntimeException("A problem appeared parsing " + clazz.getName(), e);
         }
     }
 
@@ -289,7 +291,7 @@ public class Reader {
             return jsonBuilder.toString();
 
         } catch (Exception e) {
-            throw new RuntimeException("A probleme appeared during the json formatting", e);
+            throw new RuntimeException("A problem appeared during the json formatting", e);
         }
 
 
