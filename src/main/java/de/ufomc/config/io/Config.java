@@ -19,9 +19,9 @@ public final class Config {
     @Getter
     private final Map<String, TypeValue> cache;
 
-    public Config(String fileName) {
+    public Config(String fileName, Class<?> main) {
         try {
-            this.file = new File(new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI()).getParent(), fileName + ".ud");
+            this.file = new File(new File(main.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent(), fileName + ".ud");
         } catch (Exception e) {
             throw new RuntimeException("Could not find an execution path!", e);
         }
