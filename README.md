@@ -99,14 +99,20 @@ I know some of you might tell its fake but test it out your self with the follow
 ```java
 package org.example;
 
-public class Benchmark {
+import de.ufomc.config.benchmark.Benchmark;
+import de.ufomc.config.benchmark.BenchmarkResult;
 
-    public static long benchMark(Runnable runnable) {
+public class CustomBenchmark {
 
-        long start = System.nanoTime();
-        runnable.run();
-        return System.nanoTime() - start;
+    public static void main(final String[] args) {
 
+        Runnable runnable = //your test here
+        int iterations = //how many times do you want it to run?
+                
+        //actually run the benchmark        
+        BenchmarkResult result = Benchmark.run(runnable, iterations);
+        System.out.println(result.toString()); //print
+        
     }
 
 }
