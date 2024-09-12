@@ -7,6 +7,11 @@ import java.lang.reflect.Field;
 
 public abstract class UDObject {
 
+    /*
+    * This class is used to fetch complex objects.
+    * We accomplish this overwriting the toString method.
+    */
+
     @Override
     @NonNull
     public String toString() {
@@ -16,12 +21,12 @@ public abstract class UDObject {
 
         Field[] fields = this.getClass().getDeclaredFields();
 
+        //loop through fields
         for (int i = 0; i != fields.length; i++) {
             Field field = fields[i];
             try {
                 field.setAccessible(true);
 
-                String fieldName = field.getName();
                 Object fieldValue = field.get(this);
                 String fieldType = field.getType().getSimpleName().toLowerCase();
 
@@ -35,10 +40,11 @@ public abstract class UDObject {
 
                 s.append(fieldType)
                         .append(":")
-                        .append(fieldName)
+                        .append(field.getName())
                         .append("=")
                         .append(valueRepresentation);
 
+                //only append ',' if the current field is not the last one.
                 if (fields.length - 1 != i){
                     s.append(",");
                 }
