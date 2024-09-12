@@ -1,5 +1,7 @@
 package de.ufomc.config.checks;
 
+import lombok.experimental.UtilityClass;
+
 import java.util.List;
 import java.util.Map;
 

@@ -64,23 +64,30 @@ Usage
 
 ```java
 
-        //init your writer and reader
-        Writer writer = new Writer("MyConfig");
-        Reader reader = writer.getReader();
+        /*
+        *init your config with one of these implementations.
+        *either you choose:
+        */
+        
+        //only with name -> the path will be caught from the runtime
+        Config config = new Config("fileName");
+        //your path and name
+        Config config = new Config("your/path", "filename");
+        //or a file
+        Config config = new Config(new File("your file"));
 
         //here you have some examples for putting objects into the cache
-        writer.write("user1", new User("1234", "Berlin"));
-        writer.write("anything", "you want");
-        writer.write("example list", List.of("hello", "world"))
+        config.put("myObject", new Value("hello", "world"));
+        config.put("myList", List.of(1, 2, 3));
+        config.put("myMap", Map.of("1. int", 1, "2. int", 2))
         //here we save the cache
         writer.save();
 
         //now we need to get the data out of the config
-        User user = reader.get("user1", User.class);
-        String s = reader.get("anything", "you want");
+        Value value = config.get(Value.class, "myObject");
+        List<Integer> list = config.get(Integer.class, "myList")
+        Map<String, Integer> map = config.getMap(String.class, Integer.class, "myMap");
 
-        //important! for maps and lists we use this methode!
-        List<String> strings = reader.getList("example list", String.class);
 
 ```
 

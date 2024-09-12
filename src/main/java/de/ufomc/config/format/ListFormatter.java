@@ -1,11 +1,13 @@
 package de.ufomc.config.format;
 
-import de.ufomc.config.io.Reader;
+import de.ufomc.config.checks.CheckType;
+import de.ufomc.config.pre.TypeValue;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @UtilityClass
 public final class ListFormatter {
@@ -32,9 +34,38 @@ public final class ListFormatter {
         //loop through entries and parse objects
         final List<Object> list = new ArrayList<>();
         for (int i = 0; i != entries.length; i++){
-            list.add(Reader.objFromString(type, entries[i])); //most cost expensive
+            list.add(ObjectFormatter.objFromString(type, entries[i])); //most cost expensive
         }
 
         return list;
+    }
+
+    public static <T> List<T> getList(String key, Class<T> clazz, Map<String, TypeValue> fileContent) {
+
+        if (!fileContent.containsKey(key)) {
+            throw new RuntimeException("There was no list for the key: " + key);
+        }
+
+        if (!(fileContent.get(key).getValue() instanceof List<?> list)) {
+            throw new RuntimeException("The key: " + key + " is not an instance of a List but a " + fileContent.get(key).getValue().getClass().getSimpleName());
+        }
+
+        if (CheckType.isPrimitive(clazz)) {
+
+            final List<T> objList = new ArrayList<>();
+
+            for (Object t : list) {
+                objList.add(ObjectFormatter.formateObject(clazz, t));
+            }
+
+            return objList;
+
+        } else {
+            if (!clazz.isInstance(list.getFirst())) {
+                throw new RuntimeException("The class " + clazz.getName() + " is not an instance of " + fileContent.get(key).getValue().getClass().getName());
+            }
+            return (List<T>) fileContent.get(key).getValue();
+        }
+
     }
 }
