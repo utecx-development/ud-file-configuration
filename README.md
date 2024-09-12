@@ -17,7 +17,7 @@ Implementation
         <dependency>
             <groupId>de.ufomc</groupId>
             <artifactId>ud-fileformat</artifactId>
-            <version>0.2.0</version>
+            <version>0.2.1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -40,7 +40,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'de.ufomc:ud-fileformat:0.2.0'
+    implementation 'de.ufomc:ud-fileformat:0.2.1'
 }
 ```
 
@@ -51,7 +51,7 @@ repositories {
 }
 
 dependencies {
-    implementation("de.ufomc", "ud-fileformat", "0.2.0")
+    implementation("de.ufomc", "ud-fileformat", "0.2.1")
 }
 ```
 
