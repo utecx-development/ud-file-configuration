@@ -1,5 +1,8 @@
 package de.ufomc.config.core;
 
+import de.ufomc.config.checks.CheckType;
+import lombok.NonNull;
+
 import java.lang.reflect.Field;
 
 public abstract class UDObject {

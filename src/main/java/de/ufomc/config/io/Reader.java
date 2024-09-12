@@ -1,6 +1,8 @@
 package de.ufomc.config.io;
 
-import de.ufomc.config.core.CheckType;
+import de.ufomc.config.checks.CheckType;
+import de.ufomc.config.format.ListFormatter;
+import de.ufomc.config.format.MapFormatter;
 import de.ufomc.config.pre.TypeValue;
 import lombok.Getter;
 
@@ -73,7 +75,7 @@ public class Reader {
                 String key = line.substring(type.length() + 1, line.length() - value.length() - 2);
 
                 if (type.startsWith("map<")) {
-                    map.put(key, new TypeValue(type, Maps.formateMap(type, value)));
+                    map.put(key, new TypeValue(type, MapFormatter.formatMap(type, value)));
                 } else if (type.startsWith("list<")) {
                     map.put(key, new TypeValue(type, ListFormatter.formatList(type, value)));
                 } else {
@@ -118,7 +120,7 @@ public class Reader {
 
     }
 
-    protected static Object objFromString(String type, String value) {
+    public static Object objFromString(String type, String value) {
 
         return switch (type) {
             case "string", "object" -> value;
