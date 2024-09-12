@@ -2,6 +2,7 @@ package de.ufomc.config.io;
 
 import de.ufomc.config.checks.CheckType;
 import de.ufomc.config.core.QueuedAsyncExecution;
+import de.ufomc.config.format.JsonFormatter;
 import de.ufomc.config.format.ListFormatter;
 import de.ufomc.config.format.MapFormatter;
 import de.ufomc.config.format.ObjectFormatter;
@@ -10,6 +11,8 @@ import lombok.Getter;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -90,11 +93,12 @@ public final class Config {
         cache.remove(key);
     }
 
-    //TODO
     public String toJson() {
-        return "";
+        return JsonFormatter.toJson(cache);
     }
 
-    //TODO
-    public void fromJson() {}
+    public void fromJson(String json) {
+        this.cache.putAll(JsonFormatter.fromJson(json));
+    }
+
 }

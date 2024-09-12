@@ -78,7 +78,7 @@ public class FileManager {
             if (value.getType().startsWith("map")){
 
                 s.append(value.getValue().toString()
-                        .replace("=", "-").replace(" ", ""));
+                        .replace("=", "-").trim());
 
             } else {
                 s.append(value.getValue().toString());
