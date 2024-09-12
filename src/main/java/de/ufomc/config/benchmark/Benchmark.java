@@ -1,5 +1,8 @@
 package de.ufomc.config.benchmark;
 
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
+
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.util.List;
@@ -32,6 +35,12 @@ public final class Benchmark {
         return totalGCCount;
     }
 
+    /**
+     * Run the given runnable x times and track applications performance
+     * @param runnable the program to run
+     * @param iterations amount of times "runnable" should be executed
+     * @return the result of this Benchmark
+     */
     @NonNull
     public static BenchmarkResult run(final Runnable runnable, final long iterations) {
         final long memoryUsedBefore = getUsedMemory(); //runtime memory before the benchmark
