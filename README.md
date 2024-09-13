@@ -93,7 +93,7 @@ Usage
 
 ```
 
-What does my data look like when formated?
+How does the data look when it's formatted`
 -
 ```
 string:hello=world;
