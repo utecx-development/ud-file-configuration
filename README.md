@@ -62,7 +62,7 @@ Usage
 > Important
 
 - Every complex object just like user data which you want to save to your file has to extend the UfObject class or else it wont be formatted correctly
-- THE JSON FETURE IS NOT ACCESSIBLE @ THE TIME! WE ARE WORKING ON IT!
+- THE JSON FEATURE IS NOT ACCESSIBLE @ THE TIME! WE ARE WORKING ON IT!
 
 ```java
 
