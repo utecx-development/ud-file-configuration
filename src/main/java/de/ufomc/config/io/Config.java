@@ -11,13 +11,12 @@ import lombok.Getter;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public final class Config {
     private final File file;
+    private boolean prettyWriting;
 
     @Getter
     private final Map<String, TypeValue> cache;
@@ -40,6 +39,11 @@ public final class Config {
     public Config(File file) {
         this.file = file;
         this.cache = FileManager.init(file);
+    }
+
+    public Config prettyWriting(){
+        this.prettyWriting = true;
+        return this;
     }
 
     public <K, V> Map<K, V> getMap(Class<K> keyClazz, Class<V> valueClazz, String key) {
@@ -97,8 +101,5 @@ public final class Config {
         return JsonFormatter.toJson(cache);
     }
 
-    public void fromJson(String json) {
-        this.cache.putAll(JsonFormatter.fromJson(json));
-    }
 
 }

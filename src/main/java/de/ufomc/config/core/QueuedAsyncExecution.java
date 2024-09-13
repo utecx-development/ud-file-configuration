@@ -33,7 +33,7 @@ public class QueuedAsyncExecution {
                 try {
                     task.run();
                 } catch (Exception e) {
-                    throw new RuntimeException("Error during a task in the que" + e);
+                    throw new RuntimeException("Error during a task in the que", e);
                 } finally {
                     taskFinished();
                 }
