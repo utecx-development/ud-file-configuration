@@ -101,5 +101,8 @@ public final class Config {
         return JsonFormatter.toJson(cache);
     }
 
+    public void fromJson(String json) {
+        this.cache.putAll(JsonFormatter.fromJson(json));
+    }
 
 }
