@@ -6,8 +6,8 @@ UfoData strives to provide exactly that. UfoData is:
 - 🍎 Simple - Just create a config for your files and start working with them.
 - 🌈 Unique - With a new & easy to understand format, UD's format is really nice to write & read
 - 🔄 Updated and well maintained - Make use of new features regularly :D
-- JSON - Ud has an inbuild complexe json support so you can convert your ud to json or ud to json (read details down below)
 - ❗ Responsible - In case you find any bug or a feature you dont want to be missing you can always tell us in our discord https://discord.gg/gzxrub5ABQ
+- JSON - Ud has an inbuild complexe json support so you can convert your ud to json or ud to json (read details down below)
 
 Implementation
 -
