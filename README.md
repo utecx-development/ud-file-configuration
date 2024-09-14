@@ -5,6 +5,7 @@ UfoData strives to provide exactly that. UfoData is:
 - ⚡️ Fast - Due to using an in-built-cache, it's even faster than GSON!
 - 🍎 Simple - Just create a config for your files and start working with them.
 - 🌈 Unique - With a new & easy to understand format, UD's format is really nice to write & read
+- JSON - Ud has an inbuild complexe json support so you can convert your ud to json or ud to json (read details down below)
 - ❗ Responsible - In case you find any bug or a feature you dont want to be missing you can always tell us in our discord https://discord.gg/gzxrub5ABQ
 - 🔄 Updated and well maintained - Make use of new features regularly :D
 
@@ -62,7 +63,6 @@ Usage
 > Important
 
 - Every complex object just like user data which you want to save to your file has to extend the UfObject class or else it wont be formatted correctly
-- THE JSON FEATURE IS NOT ACCESSIBLE @ THE TIME! WE ARE WORKING ON IT!
 
 ```java
 
@@ -93,6 +93,18 @@ Usage
 
 ```
 
+simply use json to convert your file to or from json
+-
+
+> this feature is still in beta! please report any bugs to our staff
+
+```java
+
+        String json = config.toJson();
+        config.fromJson("{\"your\":\"json string\"}");
+
+```
+
 How does the data look when it's formatted?
 -
 ```
@@ -105,33 +117,4 @@ object:object={string:name=Tom,int:age=13};
 Why use?
 -
 
-The reason to use the ud file formate is simple. Just take a look at the bench mark:
-
-ud file formate: 33ms
-average gson configuration: 78ms
-
-They both hat the same task but ud was more than double as fast. 
-Thats because the data is beeing cached at ud file formate.
-I know some of you might tell its fake but test it out your self with the following bench mark class:
-
-```java
-package org.example;
-
-import de.ufomc.config.benchmark.Benchmark;
-import de.ufomc.config.benchmark.BenchmarkResult;
-
-public class CustomBenchmark {
-
-    public static void main(final String[] args) {
-
-        Runnable runnable = //your test here
-        int iterations = //how many times do you want it to run?
-                
-        //actually run the benchmark        
-        BenchmarkResult result = Benchmark.run(runnable, iterations);
-        System.out.println(result.toString()); //print
-        
-    }
-
-}
-```
+-- soon! --
