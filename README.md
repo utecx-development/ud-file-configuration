@@ -101,7 +101,7 @@ simply use json to convert your file to or from json
 ```java
 
         String json = config.toJson();
-        config.fromJson("{\"your\":\"json string\"}");
+        config.fromJson("{\"your\": \"json string\"}");
 
 ```
 
