@@ -38,29 +38,36 @@ public class FileManager {
 
             }
 
-            System.out.println(s.toString().replace("\n", ""));
+            //System.out.println(s.toString().replace("\n", ""));
 
-            for (String current : s.toString().replace("\n", "").split(";")){
+            try {
+                for (String current : s.toString().replace("\n", "").split(";")){
 
-                //string:ola=olaaa;string:hello=world;list<int>:list=[1, 1, 1];map<int,int>:map={2-1, 1-1};
+                    if (current.isEmpty()) {
+                        continue;
+                    }
 
-                System.out.println(current);
+                    System.out.println(current);
 
-                String[] typeRest = current.split(":");
+                    String[] typeRest = current.split(":");
 
-                String type = typeRest[0];
-                String key = typeRest[1].split("=")[0];
-                String value = typeRest[1].split("=")[1];
+                    String type = typeRest[0];
+                    String key = typeRest[1].split("=")[0];
+                    String value = typeRest[1].split("=")[1];
 
-                if (type.startsWith("map<")) {
-                    map.put(key, new TypeValue(type, MapFormatter.formatMap(type, value)));
-                } else if (type.startsWith("list<")) {
-                    map.put(key, new TypeValue(type, ListFormatter.formatList(type, value)));
-                } else {
-                    map.put(key, new TypeValue(type, ObjectFormatter.objFromString(type, value)));
+                    if (type.startsWith("map<")) {
+                        map.put(key, new TypeValue(type, MapFormatter.formatMap(type, value)));
+                    } else if (type.startsWith("list<")) {
+                        map.put(key, new TypeValue(type, ListFormatter.formatList(type, value)));
+                    } else {
+                        map.put(key, new TypeValue(type, ObjectFormatter.objFromString(type, value)));
+                    }
+
                 }
-
+            } catch (Exception e){
+                throw new RuntimeException("Wrong syntax for: " + file.getParent() + "\\" + file.getName());
             }
+
 
             return map;
 
