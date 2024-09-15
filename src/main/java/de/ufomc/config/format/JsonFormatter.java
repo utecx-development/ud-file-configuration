@@ -1,9 +1,11 @@
 package de.ufomc.config.format;
 
 import de.ufomc.config.core.UDObject;
+import de.ufomc.config.io.Config;
 import de.ufomc.config.pre.TypeValue;
 import lombok.experimental.UtilityClass;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -120,8 +122,6 @@ public class JsonFormatter {
 
                     if (arrayJson.length() > 2) {
                         value = parseArray(arrayJson);
-                        System.out.println(value.getType() + " " + value.getValue());
-                        System.out.println(arrayJson);
                     } else {
                         value = null;
                     }
@@ -206,8 +206,6 @@ public class JsonFormatter {
         StringBuilder s = new StringBuilder();
         s.append("list<");
         List<Object> arrays = new ArrayList<>();
-
-        System.out.println(jsonArray);
 
         while (index < length) {
 
