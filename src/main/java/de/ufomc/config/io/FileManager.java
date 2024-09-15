@@ -47,8 +47,6 @@ public class FileManager {
                         continue;
                     }
 
-                    System.out.println(current);
-
                     String[] typeRest = current.split(":");
 
                     String type = typeRest[0];
