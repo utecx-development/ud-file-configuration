@@ -1,6 +1,6 @@
-package de.ufomc.config.format;
+package dev.ufo.ufodata.core.format;
 
-import de.ufomc.config.core.UDObject;
+import dev.ufo.ufodata.core.UDObject;
 import lombok.NonNull;
 
 import java.lang.reflect.Field;

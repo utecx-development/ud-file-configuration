@@ -1,4 +1,4 @@
-package de.ufomc.config.checks;
+package dev.ufo.ufodata.lib.checks;
 
 import lombok.experimental.UtilityClass;
 
@@ -17,9 +17,14 @@ public final class CheckType {
         return type == Map.class || type == List.class;
     }
 
-    public static boolean isPrimitive(Class<?> type) {
+    /**
+     * Checks if a given type is primitive
+     * @param type the given class
+     * @return true if it is a primitive type
+     */
+    public static boolean isPrimitive(final Class<?> type) {
         return !type.isPrimitive() &&
-                type != String.class &&
+                type != String.class && //although a String is NOT a primitive - this is ok here.
                 type != Integer.class &&
                 type != Boolean.class &&
                 type != Double.class &&
@@ -29,5 +34,4 @@ public final class CheckType {
                 type != Byte.class &&
                 type != Short.class;
     }
-
 }
