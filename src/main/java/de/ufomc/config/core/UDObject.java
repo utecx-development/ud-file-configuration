@@ -48,20 +48,19 @@ public abstract class UDObject {
     }
 
     /**
-     *
-     * @return
+     * Format this UDObject to a String in the popular JSON format
+     * @return object serialized as a JSON String
      */
     @NonNull
     public String toJson() {
         final StringBuilder builder = new StringBuilder("{");
         final Field[] fields = this.getClass().getDeclaredFields();
-
         for (int i = 0; i < fields.length; i++) {
-            Field field = fields[i];
+            final Field field = fields[i];
             try {
                 field.setAccessible(true);
 
-                Object fieldValue = field.get(this);
+                final Object fieldValue = field.get(this);
 
                 builder.append("\"").append(field.getName()).append("\":");
 
@@ -78,12 +77,10 @@ public abstract class UDObject {
                 if (i < fields.length - 1) {
                     builder.append(",");
                 }
-
             } catch (final IllegalAccessException exception) {
                 throw new RuntimeException(exception);
             }
         }
-
         builder.append("}");
         return builder.toString();
     }
