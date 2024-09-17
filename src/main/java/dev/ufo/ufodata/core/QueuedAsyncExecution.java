@@ -1,14 +1,20 @@
 package dev.ufo.ufodata.core;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import lombok.experimental.UtilityClass;
 
-public class QueuedAsyncExecution {
-    private static final List<Runnable> tasks = new LinkedList<>();
-    private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private static boolean isExecuting = false;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+@UtilityClass
+public final class QueuedAsyncExecution {
+    private static final ExecutorService SERVICE;
+
+    static { //initialize our thread pool (min 1, max 8 threads, can hold 100 tasks, free idle threads after 30 seconds)
+        final ArrayBlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(100); //only 100 tasks can be queued at once
+        SERVICE = new ThreadPoolExecutor(1, 8, 30, TimeUnit.SECONDS, queue);
+    }
 
     public static synchronized void queue(Runnable runnable) {
         tasks.add(runnable);
@@ -35,19 +41,5 @@ public class QueuedAsyncExecution {
                 }
             });
         }
-    }
-
-    private static void taskFinished() {
-        isExecuting = false;
-
-        if (!tasks.isEmpty()) {
-            executeNext();
-        } else {
-            shutdown();
-        }
-    }
-
-    public static void shutdown() {
-        executorService.shutdown(); //PROBLEM! CAN'T BE EVER REUSED!
     }
 }
