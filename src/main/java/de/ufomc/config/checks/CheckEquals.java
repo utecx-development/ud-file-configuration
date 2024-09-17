@@ -1,34 +1,29 @@
 package de.ufomc.config.checks;
 
-public class CheckEquals {
+import lombok.experimental.UtilityClass;
 
-    //all have to be equivalent to return true
-    public static boolean allEqual(String s, String... equivalents) {
+import java.util.Arrays;
 
-        for (String c : equivalents) {
+@UtilityClass
+public final class CheckEquals {
 
-            if (!(c.equals(s))){
-                return false;
-            }
-
-        }
-
-        return true;
-
+    /**
+     * Compare one string with a bunch of others.
+     * @param source given string
+     * @param compare an array of Strings to compare against
+     * @return true if all given Strings are equal.
+     */
+    public static boolean allEqual(final String source, final String... compare) {
+        return Arrays.stream(compare).allMatch(source::equals); //checks if all strings match
     }
 
-    //there has to be 1 equivalent to return true
-    public static boolean oneEqual(String s, String... equivalents) {
-        for (String c : equivalents) {
-
-            if (c.equals(s)){
-                return true;
-            }
-
-        }
-
-        return false;
-
+    /**
+     * There only has to be one equal to return true
+     * @param source given string
+     * @param equivalents an array of Strings to compare against
+     * @return true if only one of all given Strings is equal to source
+     */
+    public static boolean oneEqual(final String source, final String... compare) {
+        return Arrays.stream(compare).anyMatch(against -> against.equals(source)); //checks if more than 0 strings match
     }
-
 }
