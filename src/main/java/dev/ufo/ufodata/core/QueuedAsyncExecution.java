@@ -23,6 +23,5 @@ public final class QueuedAsyncExecution {
      */
     public static void queue(final @NonNull Runnable runnable) {
         SERVICE.submit(runnable);
-        SERVICE.submit(runnable);
     }
 }
