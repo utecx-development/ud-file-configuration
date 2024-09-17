@@ -7,62 +7,54 @@ import java.lang.reflect.Field;
 
 public abstract class UDObject {
 
-    /*
-    * This class is used to fetch complex objects.
-    * We accomplish this overwriting the toString method.
-    */
-
+    /**
+     * Format this UDObject to a representative String
+     * @return object serialized as a String
+     */
     @Override
     @NonNull
     public String toString() {
-        StringBuilder s = new StringBuilder();
-
-        s.append("{");
-
-        Field[] fields = this.getClass().getDeclaredFields();
-
-        //loop through fields
-        for (int i = 0; i != fields.length; i++) {
-            Field field = fields[i];
+        final StringBuilder builder = new StringBuilder("{");
+        final Field[] fields = this.getClass().getDeclaredFields();
+        for (int i = 0; i != fields.length; i++) { //loop through fields
+            final Field field = fields[i];
             try {
                 field.setAccessible(true);
 
-                Object fieldValue = field.get(this);
-                String fieldType = field.getType().getSimpleName().toLowerCase();
+                final Object fieldValue = field.get(this);
+                final String fieldType = field.getType().getSimpleName().toLowerCase();
 
                 String valueRepresentation;
-
                 if (fieldValue != null && CheckType.isPrimitive(field.getType()) && !(fieldValue instanceof String)) {
                     valueRepresentation = fieldValue.toString();
                 } else {
                     valueRepresentation = fieldValue != null ? fieldValue.toString() : "null";
                 }
 
-                s.append(fieldType)
-                        .append(":")
-                        .append(field.getName())
-                        .append("=")
+                builder.append(fieldType).append(":")
+                        .append(field.getName()).append("=")
                         .append(valueRepresentation);
 
                 //only append ',' if the current field is not the last one.
-                if (fields.length - 1 != i){
-                    s.append(",");
+                if (fields.length - 1 != i) {
+                    builder.append(",");
                 }
-
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
+            } catch (final IllegalAccessException exception) {
+                throw new RuntimeException(exception);
             }
         }
-        s.append("}");
-        return s.toString();
+        builder.append("}");
+        return builder.toString();
     }
 
+    /**
+     *
+     * @return
+     */
     @NonNull
     public String toJson() {
-        StringBuilder s = new StringBuilder();
-        s.append("{");
-
-        Field[] fields = this.getClass().getDeclaredFields();
+        final StringBuilder builder = new StringBuilder("{");
+        final Field[] fields = this.getClass().getDeclaredFields();
 
         for (int i = 0; i < fields.length; i++) {
             Field field = fields[i];
@@ -71,28 +63,28 @@ public abstract class UDObject {
 
                 Object fieldValue = field.get(this);
 
-                s.append("\"").append(field.getName()).append("\":");
+                builder.append("\"").append(field.getName()).append("\":");
 
                 if (fieldValue == null) {
-                    s.append("null");
+                    builder.append("null");
                 } else if (fieldValue instanceof String) {
-                    s.append("\"").append(fieldValue).append("\"");
+                    builder.append("\"").append(fieldValue).append("\"");
                 } else if (CheckType.isPrimitive(field.getType()) || fieldValue instanceof Number || fieldValue instanceof Boolean) {
-                    s.append(fieldValue);
+                    builder.append(fieldValue);
                 } else {
-                    s.append("\"").append(fieldValue).append("\"");
+                    builder.append("\"").append(fieldValue).append("\"");
                 }
 
                 if (i < fields.length - 1) {
-                    s.append(",");
+                    builder.append(",");
                 }
 
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
+            } catch (final IllegalAccessException exception) {
+                throw new RuntimeException(exception);
             }
         }
-        s.append("}");
-        return s.toString();
-    }
 
+        builder.append("}");
+        return builder.toString();
+    }
 }
