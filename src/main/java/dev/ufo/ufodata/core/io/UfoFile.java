@@ -29,7 +29,7 @@ public final class UfoFile {
     @Getter @Setter @NonFinal boolean prettyWriting;
     @Getter @Setter @NonFinal boolean changed; //if this has not changed there is no need to write into the file!
 
-    //private constructor getting the file directly
+    //private constructor with direct file parameter
     private UfoFile(final File file) {
         this.file = file;
         this.cache = FileManager.init(file);
@@ -64,6 +64,7 @@ public final class UfoFile {
      * @return new UfoFile instance (if successful)
      * @throws RuntimeException Thrown in case there is a problem with the given main class
      */
+    @NonNull
     public static UfoFile of(final Class<?> main, final String fileName) throws RuntimeException {
         try {
             final String path = new File(main.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent();
@@ -136,7 +137,7 @@ public final class UfoFile {
      */
     public void save() {
         QueuedAsyncExecution.queue(() -> {
-            try (final PrintWriter writer = new PrintWriter(this.file)) {
+            try (final PrintWriter writer = new PrintWriter(this.file)) { //Todo: Test if this overwrites current file contents (it should!)
                 writer.print(FileManager.buildFile(this.cache));
                 writer.flush();
             } catch (final FileNotFoundException exception) {
@@ -156,16 +157,16 @@ public final class UfoFile {
 
     //Todo: Test if this is broken? Topic: Comments vs Line Removal Discussion.
     /**
-     *
-     * @param key
+     * Remove entry with given identifier from this file
+     * @param key Identifier of the element
      */
     public void remove(final String key) {
         cache.remove(key);
     }
 
     /**
-     *
-     * @return
+     * Feature: Convert this UfoFile to JSON to work with it
+     * @return This file formatted to be a JSON
      */
     @NonNull
     public String toJson() {
@@ -173,12 +174,21 @@ public final class UfoFile {
     }
 
     /**
-     *
-     * @param json
+     * Feature: Overwrite this files contents with JSON contents
+     * @param json JSON to overwrite this files contents with
      */
     @NonNull
     public void fromJson(final String json) {
         this.cache.clear(); //free cache
+        this.cache.putAll(JsonFormatter.fromJson(json)); //add in all the contents of this JSON
+    }
+
+    /**
+     * Feature: Add to this files contents with JSON contents
+     * @param json JSON to add to this files contents
+     */
+    @NonNull
+    public void addJson(final String json) {
         this.cache.putAll(JsonFormatter.fromJson(json)); //add in all the contents of this JSON
     }
 }
