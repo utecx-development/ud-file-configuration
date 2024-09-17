@@ -1,27 +1,29 @@
-package dev.ufo.ufodata.io;
+package dev.ufo.ufodata.core.io;
 
-import dev.ufo.ufodata.checks.CheckType;
+import dev.ufo.ufodata.lib.checks.CheckType;
 import dev.ufo.ufodata.core.QueuedAsyncExecution;
-import dev.ufo.ufodata.format.JsonFormatter;
-import dev.ufo.ufodata.format.ListFormatter;
-import dev.ufo.ufodata.format.MapFormatter;
-import dev.ufo.ufodata.format.ObjectFormatter;
-import dev.ufo.ufodata.pre.TypeValue;
+import dev.ufo.ufodata.core.format.JsonFormatter;
+import dev.ufo.ufodata.core.format.ListFormatter;
+import dev.ufo.ufodata.core.format.MapFormatter;
+import dev.ufo.ufodata.core.format.ObjectFormatter;
+import dev.ufo.ufodata.lib.TypeValue;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public final class UfoFile {
-    private final File file;
-    private boolean prettyWriting;
+    File file;
+    @Getter Map<String, TypeValue> cache;
+    @NonFinal boolean prettyWriting;
 
-    @Getter
-    private final Map<String, TypeValue> cache;
-
-    public Config(String fileName, Class<?> main) {
+    public UfoFile(String fileName, Class<?> main) {
         try {
             this.file = new File(new File(main.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent(), fileName + ".ud");
         } catch (Exception e) {
@@ -31,17 +33,17 @@ public final class UfoFile {
         this.cache = FileManager.init(file);
     }
 
-    public Config(String path, String fileName) {
+    public UfoFile(String path, String fileName) {
         this.file = new File(path, fileName + ".ud");
         this.cache = FileManager.init(file);
     }
 
-    public Config(File file) {
+    public UfoFile(File file) {
         this.file = file;
         this.cache = FileManager.init(file);
     }
 
-    public Config prettyWriting(){
+    public UfoFile prettyWriting(){
         this.prettyWriting = true;
         return this;
     }

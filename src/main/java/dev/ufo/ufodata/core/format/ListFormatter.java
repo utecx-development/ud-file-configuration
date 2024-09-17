@@ -1,7 +1,7 @@
-package dev.ufo.ufodata.format;
+package dev.ufo.ufodata.core.format;
 
-import dev.ufo.ufodata.checks.CheckType;
-import dev.ufo.ufodata.pre.TypeValue;
+import dev.ufo.ufodata.lib.checks.CheckType;
+import dev.ufo.ufodata.lib.TypeValue;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 

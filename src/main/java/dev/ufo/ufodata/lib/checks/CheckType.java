@@ -1,4 +1,4 @@
-package dev.ufo.ufodata.checks;
+package dev.ufo.ufodata.lib.checks;
 
 import lombok.experimental.UtilityClass;
 

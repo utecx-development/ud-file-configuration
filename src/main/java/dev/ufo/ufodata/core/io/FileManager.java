@@ -1,9 +1,9 @@
-package dev.ufo.ufodata.io;
+package dev.ufo.ufodata.core.io;
 
-import dev.ufo.ufodata.format.ListFormatter;
-import dev.ufo.ufodata.format.MapFormatter;
-import dev.ufo.ufodata.format.ObjectFormatter;
-import dev.ufo.ufodata.pre.TypeValue;
+import dev.ufo.ufodata.core.format.ListFormatter;
+import dev.ufo.ufodata.core.format.MapFormatter;
+import dev.ufo.ufodata.core.format.ObjectFormatter;
+import dev.ufo.ufodata.lib.TypeValue;
 
 import java.io.*;
 import java.util.HashMap;

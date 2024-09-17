@@ -1,8 +1,8 @@
-package dev.ufo.ufodata.format;
+package dev.ufo.ufodata.core.format;
 
 import dev.ufo.ufodata.core.UDObject;
 import de.ufomc.config.io.Config;
-import dev.ufo.ufodata.pre.TypeValue;
+import dev.ufo.ufodata.lib.TypeValue;
 import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;

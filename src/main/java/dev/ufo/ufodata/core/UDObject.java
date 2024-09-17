@@ -1,6 +1,6 @@
 package dev.ufo.ufodata.core;
 
-import dev.ufo.ufodata.checks.CheckType;
+import dev.ufo.ufodata.lib.checks.CheckType;
 import lombok.NonNull;
 
 import java.lang.reflect.Field;

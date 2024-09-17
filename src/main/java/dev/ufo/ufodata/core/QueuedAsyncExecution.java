@@ -48,6 +48,6 @@ public class QueuedAsyncExecution {
     }
 
     public static void shutdown() {
-        executorService.shutdown();
+        executorService.shutdown(); //PROBLEM! CAN'T BE EVER REUSED!
     }
 }

@@ -1,4 +1,4 @@
-package dev.ufo.ufodata.format;
+package dev.ufo.ufodata.core.format;
 
 import dev.ufo.ufodata.core.UDObject;
 import lombok.NonNull;
