@@ -1,11 +1,10 @@
-package de.ufomc.config.format;
+package dev.ufo.ufodata.format;
 
-import de.ufomc.config.core.UDObject;
+import dev.ufo.ufodata.core.UDObject;
 import de.ufomc.config.io.Config;
-import de.ufomc.config.pre.TypeValue;
+import dev.ufo.ufodata.pre.TypeValue;
 import lombok.experimental.UtilityClass;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -1,9 +1,9 @@
-package de.ufomc.config.io;
+package dev.ufo.ufodata.io;
 
-import de.ufomc.config.format.ListFormatter;
-import de.ufomc.config.format.MapFormatter;
-import de.ufomc.config.format.ObjectFormatter;
-import de.ufomc.config.pre.TypeValue;
+import dev.ufo.ufodata.format.ListFormatter;
+import dev.ufo.ufodata.format.MapFormatter;
+import dev.ufo.ufodata.format.ObjectFormatter;
+import dev.ufo.ufodata.pre.TypeValue;
 
 import java.io.*;
 import java.util.HashMap;

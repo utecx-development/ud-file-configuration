@@ -85,7 +85,7 @@ Usage
         //here we save the cache
         writer.save();
 
-        //now we need to get the data out of the config
+        //now we need to get the ufodata out of the config
         Value value = config.get(Value.class, "myObject");
         List<Integer> list = config.get(Integer.class, "myList")
         Map<String, Integer> map = config.getMap(String.class, Integer.class, "myMap");

@@ -1,4 +1,4 @@
-package de.ufomc.config.pre;
+package dev.ufo.ufodata.pre;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,9 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Tupel <M, T> {
+public class TypeValue {
 
-    private M m;
-    private T t;
+    private String type;
+    private Object value;
 
 }

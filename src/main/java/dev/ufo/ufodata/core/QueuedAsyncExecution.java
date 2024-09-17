@@ -1,15 +1,11 @@
-package de.ufomc.config.core;
+package dev.ufo.ufodata.core;
 
-import de.ufomc.config.io.Config;
-
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class QueuedAsyncExecution {
-
     private static final List<Runnable> tasks = new LinkedList<>();
     private static final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private static boolean isExecuting = false;
