@@ -20,10 +20,10 @@ public final class CheckEquals {
     /**
      * There only has to be one equal to return true
      * @param source given string
-     * @param equivalents an array of Strings to compare against
+     * @param compare an array of Strings to compare against
      * @return true if only one of all given Strings is equal to source
      */
     public static boolean oneEqual(final String source, final String... compare) {
-        return Arrays.stream(compare).anyMatch(against -> against.equals(source)); //checks if more than 0 strings match
+        return Arrays.asList(compare).contains(source); //checks if more than 0 strings match
     }
 }
