@@ -15,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -130,33 +131,41 @@ public final class UfoFile {
         return clazz.cast(object);
     }
 
+    /**
+     *
+     */
     public void save() {
-
-        QueuedAsyncExecution.queue(() ->{
-            try (final PrintWriter writer = new PrintWriter(file)) {
-                writer.print(FileManager.buildFile(cache));
+        QueuedAsyncExecution.queue(() -> {
+            try (final PrintWriter writer = new PrintWriter(this.file)) {
+                writer.print(FileManager.buildFile(this.cache));
                 writer.flush();
-            } catch (final Exception exception) {
-                throw new RuntimeException("A problem occurred while saving to " + this.file.getName() + "!", exception);
+            } catch (final FileNotFoundException exception) {
+                throw new RuntimeException("An error occurred while trying to save contents to: '" + this.file.getName() + "'!", exception);
             }
         });
-
     }
 
-    public void put(String key, Object o) {
-        this.cache.put(key, new TypeValue(ObjectFormatter.type(o), o));
+    /**
+     *
+     * @param key
+     * @param object
+     */
+    public void put(final String key, final Object object) {
+        this.cache.put(key, new TypeValue(ObjectFormatter.type(object), object));
     }
 
-    public void remove(String key) {
+    public void remove(final String key) {
         cache.remove(key);
     }
 
+    @NonNull
     public String toJson() {
         return JsonFormatter.toJson(cache);
     }
 
-    public void fromJson(String json) {
-        this.cache.putAll(JsonFormatter.fromJson(json));
+    @NonNull
+    public void fromJson(final String json) {
+        this.cache.clear(); //free cache
+        this.cache.putAll(JsonFormatter.fromJson(json)); //add in all the contents of this JSON
     }
-
 }
