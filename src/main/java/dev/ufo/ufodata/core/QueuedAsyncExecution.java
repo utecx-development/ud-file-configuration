@@ -1,5 +1,6 @@
 package dev.ufo.ufodata.core;
 
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -16,30 +17,12 @@ public final class QueuedAsyncExecution {
         SERVICE = new ThreadPoolExecutor(1, 8, 30, TimeUnit.SECONDS, queue);
     }
 
-    public static synchronized void queue(Runnable runnable) {
-        tasks.add(runnable);
-
-        if (!isExecuting) {
-            executeNext();
-        }
-    }
-
-    private static void executeNext() {
-        Runnable task = tasks.get(0);
-        tasks.remove(0);
-
-        if (task != null) {
-            isExecuting = true;
-
-            executorService.submit(() -> {
-                try {
-                    task.run();
-                } catch (Exception e) {
-                    throw new RuntimeException("Error during a task in the que", e);
-                } finally {
-                    taskFinished();
-                }
-            });
-        }
+    /**
+     * Queues this runnable to be executed by a thread within our threadpool
+     * @param runnable The runnable you want to execute.
+     */
+    public static void queue(final @NonNull Runnable runnable) {
+        SERVICE.submit(runnable);
+        SERVICE.submit(runnable);
     }
 }
