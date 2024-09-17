@@ -4,54 +4,40 @@ import dev.ufo.ufodata.core.format.ListFormatter;
 import dev.ufo.ufodata.core.format.MapFormatter;
 import dev.ufo.ufodata.core.format.ObjectFormatter;
 import dev.ufo.ufodata.lib.TypeValue;
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FileManager {
+@UtilityClass
+public final class FileManager {
 
-    public static Map<String, TypeValue> init(File file) {
-
-        if (!file.exists()){
-            initFile(file);
-        }
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+    @NonNull
+    public static Map<String, TypeValue> init(final File file) {
+        if (!file.exists()) initFile(file);
+        try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            final Map<String, TypeValue> map = new HashMap<>();
+            final StringBuilder builder = new StringBuilder();
 
             String line;
-            Map<String, TypeValue> map = new HashMap<>();
-            StringBuilder s = new StringBuilder();
-
-            //941940.7
-
             while ((line = reader.readLine()) != null) {
-
-                if (line.isEmpty()) {
-                    continue;
-                }
-
-                if (line.startsWith("#")) {
-                    continue;
-                }
-
-                s.append(line);
-
+                if (line.isEmpty()) continue;
+                if (line.startsWith("#")) continue;
+                builder.append(line);
             }
 
-            //System.out.println(s.toString().replace("\n", ""));
-
             try {
-                for (String current : s.toString().replace("\n", "").split(";")){
 
-                    if (current.isEmpty()) {
-                        continue;
-                    }
+                final String[] lines = builder.toString().replace("\n", "").split(";");
+                for (final String current : lines){
+                    if (current.isEmpty()) continue;
 
-                    String[] typeRest = current.split(":");
-
-                    String type = typeRest[0];
-                    String key = typeRest[1].split("=")[0];
-                    String value = typeRest[1].split("=")[1];
+                    final String[] typeRest = current.split(":");
+                    final String type = typeRest[0];
+                    final String key = typeRest[1].split("=")[0];
+                    final String value = typeRest[1].split("=")[1];
 
                     if (type.startsWith("map<")) {
                         map.put(key, new TypeValue(type, MapFormatter.formatMap(type, value)));
@@ -60,54 +46,44 @@ public class FileManager {
                     } else {
                         map.put(key, new TypeValue(type, ObjectFormatter.objFromString(type, value)));
                     }
-
                 }
-            } catch (Exception e){
-                throw new RuntimeException("Wrong syntax for: " + file.getParent() + "\\" + file.getName());
+                return map;
+
+            } catch (final Exception exception){
+                throw new RuntimeException("Failed to load file: '" + file.getParent() + "\\" + file.getName() + "' because of wrong syntax");
             }
-
-
-            return map;
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (final IOException exception) {
+            throw new RuntimeException(exception);
         }
-
     }
 
-    public static void initFile(File file) {
-        if (!file.exists()){
+    public static void initFile(final File file) {
+        if (!file.exists()) {
             try (final PrintWriter writer = new PrintWriter(file)) {
                 writer.print("");
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            } catch (Exception exception) {
+                throw new RuntimeException(exception);
             }
         }
     }
 
-    public static String buildFile(Map<String, TypeValue> cache) {
+    @NonNull
+    public static String buildFile(final Map<String, TypeValue> cache) {
+        final StringBuilder builder = new StringBuilder();
 
-        StringBuilder s = new StringBuilder();
+        cache.forEach((key, value) -> {
+            builder.append(value.getType()).append(":").append(key).append("=");
 
-        cache.forEach((key, value) ->{
-
-            s.append(value.getType())
-                    .append(":").append(key)
-                    .append("=");
-
-            if (value.getType().startsWith("map")){
-
-                s.append(value.getValue().toString()
+            if (value.getType().startsWith("map")) {
+                builder.append(value.getValue().toString()
                         .replace("=", "-").trim());
-
             } else {
-                s.append(value.getValue().toString());
+                builder.append(value.getValue().toString());
             }
 
-            s.append(";\n");
-
+            builder.append(";\n");
         });
-        return s.toString();
-    }
 
+        return builder.toString();
+    }
 }
