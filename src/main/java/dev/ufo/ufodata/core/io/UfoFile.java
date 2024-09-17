@@ -132,7 +132,7 @@ public final class UfoFile {
     }
 
     /**
-     *
+     * Write the caches contents into the file.
      */
     public void save() {
         QueuedAsyncExecution.queue(() -> {
@@ -146,23 +146,36 @@ public final class UfoFile {
     }
 
     /**
-     *
-     * @param key
-     * @param object
+     * Put a new element to the cache or replace the old value!
+     * @param key Identifier of the element
+     * @param object Object to save to the file
      */
     public void put(final String key, final Object object) {
         this.cache.put(key, new TypeValue(ObjectFormatter.type(object), object));
     }
 
+    //Todo: Test if this is broken? Topic: Comments vs Line Removal Discussion.
+    /**
+     *
+     * @param key
+     */
     public void remove(final String key) {
         cache.remove(key);
     }
 
+    /**
+     *
+     * @return
+     */
     @NonNull
     public String toJson() {
         return JsonFormatter.toJson(cache);
     }
 
+    /**
+     *
+     * @param json
+     */
     @NonNull
     public void fromJson(final String json) {
         this.cache.clear(); //free cache
