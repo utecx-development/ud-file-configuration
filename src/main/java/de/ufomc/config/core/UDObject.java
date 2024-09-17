@@ -57,4 +57,42 @@ public abstract class UDObject {
         return s.toString();
     }
 
+    @NonNull
+    public String toJson() {
+        StringBuilder s = new StringBuilder();
+        s.append("{");
+
+        Field[] fields = this.getClass().getDeclaredFields();
+
+        for (int i = 0; i < fields.length; i++) {
+            Field field = fields[i];
+            try {
+                field.setAccessible(true);
+
+                Object fieldValue = field.get(this);
+
+                s.append("\"").append(field.getName()).append("\":");
+
+                if (fieldValue == null) {
+                    s.append("null");
+                } else if (fieldValue instanceof String) {
+                    s.append("\"").append(fieldValue).append("\"");
+                } else if (CheckType.isPrimitive(field.getType()) || fieldValue instanceof Number || fieldValue instanceof Boolean) {
+                    s.append(fieldValue);
+                } else {
+                    s.append("\"").append(fieldValue).append("\"");
+                }
+
+                if (i < fields.length - 1) {
+                    s.append(",");
+                }
+
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        s.append("}");
+        return s.toString();
+    }
+
 }

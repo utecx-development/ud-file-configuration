@@ -45,10 +45,10 @@ public class ObjectFormatter {
         return switch (type) {
             case "string", "object" -> value;
 
-            case "int" -> Integer.parseInt(value);
-            case "float" -> Float.parseFloat(value);
-            case "long" -> Long.parseLong(value);
-            case "boolean" -> Boolean.parseBoolean(value);
+            case "int" -> Integer.parseInt(value.trim());
+            case "float" -> Float.parseFloat(value.trim());
+            case "long" -> Long.parseLong(value.trim());
+            case "boolean" -> Boolean.parseBoolean(value.trim());
 
             default -> throw new RuntimeException("Unsupported type: " + type);
         };

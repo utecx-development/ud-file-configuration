@@ -16,6 +16,7 @@ import java.util.Map;
 
 public final class UfoFile {
     private final File file;
+    private boolean prettyWriting;
 
     @Getter
     private final Map<String, TypeValue> cache;
@@ -38,6 +39,11 @@ public final class UfoFile {
     public Config(File file) {
         this.file = file;
         this.cache = FileManager.init(file);
+    }
+
+    public Config prettyWriting(){
+        this.prettyWriting = true;
+        return this;
     }
 
     public <K, V> Map<K, V> getMap(Class<K> keyClazz, Class<V> valueClazz, String key) {
