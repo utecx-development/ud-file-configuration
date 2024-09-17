@@ -29,7 +29,7 @@ public final class UfoFile {
     @Getter @Setter @NonFinal boolean changed; //if this has not changed there is no need to write into the file!
 
     //private constructor getting the file directly
-    private UfoFile(File file) {
+    private UfoFile(final File file) {
         this.file = file;
         this.cache = FileManager.init(file);
     }
@@ -72,34 +72,62 @@ public final class UfoFile {
         }
     }
 
-    public <K, V> Map<K, V> getMap(Class<K> keyClazz, Class<V> valueClazz, String key) {
+    /**
+     * Get a map from your UfoFile.
+     * @param keyClazz Type the map's keys are
+     * @param valueClazz Type the map's values are
+     * @param key Identifier of this map
+     * @return The requested map using the given types
+     * @param <K> keyClazz type
+     * @param <V> valueClazz type
+     */
+    @NonNull
+    public <K, V> Map<K, V> getMap(final Class<K> keyClazz, final Class<V> valueClazz, final String key) {
         return MapFormatter.getMap(key, keyClazz, valueClazz, cache);
     }
 
-    public <T> List<T> getList(Class<T> clazz, String key){
+    /**
+     * Get a list from your UfoFile.
+     * @param clazz Type which the map's contents are
+     * @param key Identifier of this list
+     * @return The requested list using the given type
+     * @param <T> clazz type
+     */
+    @NonNull
+    public <T> List<T> getList(final Class<T> clazz, final String key){
         return ListFormatter.getList(key, clazz, cache);
     }
 
-    public <T> T get(Class<T> clazz, String key) {
-        if (!cache.containsKey(key)) {
-            throw new RuntimeException("The key " + key + " was not found");
-        }
-
-        Object o = cache.get(key).getValue();
-
-        if (o.getClass() != clazz && !o.getClass().isAssignableFrom(clazz)) {
-            throw new RuntimeException("The key " + key + " is not an instance of " + clazz.getName());
-        }
-
+    /**
+     * Get entry by a specific type.
+     * @param clazz Type which the entries content is
+     * @param key Identifier of this entry
+     * @return Requested object / primitive
+     * @param <T> clazz type
+     */
+    @NonNull
+    public <T> T get(final Class<T> clazz, final String key) {
+        //check if the given clazz can be used here
         if (CheckType.isListOrMap(clazz)) {
-            throw new RuntimeException("Wrong methode! Please use getList or getMap.");
+            throw new RuntimeException("Wrong usage. Please use #getList for lists and getMap for maps!");
         }
 
+        //retrieve object from cache
+        if (!cache.containsKey(key)) {
+            throw new RuntimeException("No entry could be found using identifier: '" + key + "'!");
+        }
+        final Object object = cache.get(key).getValue();
+
+        //check if entry matches given type
+        if (object.getClass() != clazz && !object.getClass().isAssignableFrom(clazz)) {
+            throw new RuntimeException("Entry under identifier: '" + key + "' does not match given type: '" + clazz.getName() + "'");
+        }
+
+        //format or cast return type
         if (CheckType.isPrimitive(clazz)) {
-            return ObjectFormatter.formateObject(clazz, o);
+            return ObjectFormatter.formateObject(clazz, object);
         }
-
-        return clazz.cast(o);
+        return clazz.cast(object);
     }
 
     public void save() {
