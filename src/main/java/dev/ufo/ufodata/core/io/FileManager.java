@@ -14,6 +14,11 @@ import java.util.Map;
 @UtilityClass
 public final class FileManager {
 
+    /**
+     * 
+     * @param file
+     * @return
+     */
     @NonNull
     public static Map<String, TypeValue> init(final File file) {
         if (!file.exists()) initFile(file);
@@ -57,6 +62,10 @@ public final class FileManager {
         }
     }
 
+    /**
+     *
+     * @param file
+     */
     public static void initFile(final File file) {
         if (!file.exists()) {
             try (final PrintWriter writer = new PrintWriter(file)) {
@@ -67,6 +76,11 @@ public final class FileManager {
         }
     }
 
+    /**
+     *
+     * @param cache
+     * @return
+     */
     @NonNull
     public static String buildFile(final Map<String, TypeValue> cache) {
         final StringBuilder builder = new StringBuilder();
