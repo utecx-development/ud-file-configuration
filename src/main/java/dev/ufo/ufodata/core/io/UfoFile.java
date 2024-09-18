@@ -26,13 +26,14 @@ public final class UfoFile {
     private static final String FILE_SUFFIX = ".ud";
     @Getter File file;
     Map<String, TypeValue> cache; //no getter since this would be a vulnerability (some data might not be saved)
-    @Getter @Setter @NonFinal boolean prettyWriting;
+    @Getter @Setter @NonFinal boolean prettyWriting; //Todo: Implement!
     @Getter @Setter @NonFinal boolean changed; //if this has not changed there is no need to write into the file!
 
     //private constructor with direct file parameter
     private UfoFile(final File file) {
         this.file = file;
         this.cache = FileManager.init(file);
+        this.changed = false;
     }
 
     /**
@@ -133,9 +134,11 @@ public final class UfoFile {
     }
 
     /**
-     * Write the caches contents into the file.
+     * Write contents of this UfoFile to the actual file.
+     * @param force update file even if there was no change to the data?
      */
-    public void save() {
+    public void save(boolean force) {
+        if (!force && !changed) return; //there has been no change to the data
         QueuedAsyncExecution.queue(() -> {
             try (final PrintWriter writer = new PrintWriter(this.file)) { //Todo: Test if this overwrites current file contents (it should!)
                 writer.print(FileManager.buildFile(this.cache));
@@ -153,15 +156,16 @@ public final class UfoFile {
      */
     public void put(final String key, final Object object) {
         this.cache.put(key, new TypeValue(ObjectFormatter.type(object), object));
+        this.changed = true;
     }
 
-    //Todo: Test if this is broken? Topic: Comments vs Line Removal Discussion.
     /**
      * Remove entry with given identifier from this file
      * @param key Identifier of the element
      */
     public void remove(final String key) {
-        cache.remove(key);
+        this.cache.remove(key);
+        this.changed = true;
     }
 
     /**
@@ -181,6 +185,7 @@ public final class UfoFile {
     public void fromJson(final String json) {
         this.cache.clear(); //free cache
         this.cache.putAll(JsonFormatter.fromJson(json)); //add in all the contents of this JSON
+        this.changed = true;
     }
 
     /**
@@ -190,5 +195,6 @@ public final class UfoFile {
     @NonNull
     public void addJson(final String json) {
         this.cache.putAll(JsonFormatter.fromJson(json)); //add in all the contents of this JSON
+        this.changed = true;
     }
 }
