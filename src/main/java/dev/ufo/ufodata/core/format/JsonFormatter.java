@@ -1,7 +1,6 @@
 package dev.ufo.ufodata.core.format;
 
 import dev.ufo.ufodata.core.UDObject;
-import de.ufomc.config.io.Config;
 import dev.ufo.ufodata.lib.TypeValue;
 import lombok.experimental.UtilityClass;
 
@@ -107,7 +106,7 @@ public class JsonFormatter {
 
                     int closingBraceIndex = findClosing(json, index, '{', '}');
 
-                    value = new TypeValue("object", ObjectFormatter.objFromString(
+                    value = new TypeValue("object", ObjectFormatter.toObject(
                             "object", json.substring(index, closingBraceIndex + 1)
                     ));
 

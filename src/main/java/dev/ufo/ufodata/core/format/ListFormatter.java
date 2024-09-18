@@ -35,38 +35,45 @@ public final class ListFormatter {
         //loop through entries and parse objects
         final List<Object> list = new ArrayList<>();
         for (int i = 0; i != entries.length; i++){
-            list.add(ObjectFormatter.objFromString(type, entries[i].trim())); //most cost expensive
+            list.add(ObjectFormatter.toObject(type, entries[i].trim())); //most cost expensive
         }
 
         return list;
     }
 
-    public static <T> List<T> getList(String key, Class<T> clazz, Map<String, TypeValue> fileContent) {
-
+    /**
+     * Get a list from the given file
+     * @param key Identifier of this list
+     * @param clazz Type the contents of this list should be in
+     * @param fileContent Contents of file
+     * @return List with contents of requested type
+     * @param <T> content type
+     */
+    @NonNull
+    @SuppressWarnings("unchecked")
+    public static <T> List<T> getList(final String key, final Class<T> clazz, final Map<String, TypeValue> fileContent) {
+        //is there a list behind this identifier
         if (!fileContent.containsKey(key)) {
-            throw new RuntimeException("There was no list for the key: " + key);
+            throw new RuntimeException("There was no list for the key: '" + key + "'");
         }
 
+        //check if this even is a list
         if (!(fileContent.get(key).getValue() instanceof List<?> list)) {
-            throw new RuntimeException("The key: " + key + " is not an instance of a List but a " + fileContent.get(key).getValue().getClass().getSimpleName());
+            throw new RuntimeException("Behind the key: '" + key + "' there is not an instance of a list but a '" + fileContent.get(key).getValue().getClass().getSimpleName() + "'");
         }
 
+        //check if the given lists contents are primitives
         if (CheckType.isPrimitive(clazz)) {
-
-            final List<T> objList = new ArrayList<>();
-
-            for (Object t : list) {
-                objList.add(ObjectFormatter.formateObject(clazz, t));
+            final List<T> objectList = new ArrayList<>();
+            for (Object object : list) {
+                objectList.add(ObjectFormatter.toObject(clazz, object));
             }
-
-            return objList;
-
+            return objectList;
         } else {
             if (!clazz.isInstance(list.getFirst())) {
-                throw new RuntimeException("The class " + clazz.getName() + " is not an instance of " + fileContent.get(key).getValue().getClass().getName());
+                throw new RuntimeException("The class '" + clazz.getName() + "' is not an instance of '" + fileContent.get(key).getValue().getClass().getName() + "'");
             }
             return (List<T>) fileContent.get(key).getValue();
         }
-
     }
 }
