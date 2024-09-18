@@ -13,27 +13,32 @@ import java.util.Map;
 @UtilityClass
 public final class MapFormatter {
 
+    /**
+     * Format a given input in UfoData format to an actual map
+     * @param type String containing the 2 required types for this map
+     * @param value The formatted contents of this map
+     * @return A Hashmap usable by this parser.
+     */
     @NonNull
-    public static Map<?, ?> formatMap(String type, final String value) {
-        final String[] types = type.replace("<" , "")
-                .replace(">", "")
-                .replace("map", "")
+    public static Map<?, ?> formatMap(final String type, final String value) {
+        //remove formatting tags and split to an array
+        final String[] types = type
+                .replace("<" , "").replace(">", "").replace("map", "")
                 .split(",");
 
-        if (type.length() < 2) throw new RuntimeException("Could not find 2 types for map");
+        //check if this can be a map!
+        if (type.length() < 2) throw new RuntimeException("Could not find the 2 types for this map");
 
-        final String[] entries = value.replace("{","")
-                .replace("}", "")
-                .replace("\"", "")
+        //split the entries of this map!
+        final String[] entries = value
+                .replace("{","").replace("}", "").replace("\"", "")
                 .split(",");
 
+        //fill everything into an actual map
         final Map<Object, Object> map = new HashMap<>();
-
         for (int i = 0; i != entries.length; i++){
             String[] keyValue = entries[i].split("-");
-
-            map.put(ObjectFormatter.objFromString(types[0], keyValue[0]),
-                    ObjectFormatter.objFromString(types[1], keyValue[1]));
+            map.put(ObjectFormatter.toObject(types[0], keyValue[0]), ObjectFormatter.toObject(types[1], keyValue[1]));
         }
 
         return map;
@@ -80,7 +85,7 @@ public final class MapFormatter {
             final List<T> objList = new ArrayList<>();
 
             for (Object t : list) {
-                objList.add(ObjectFormatter.formateObject(clazz, t));
+                objList.add(ObjectFormatter.toObject(clazz, t));
             }
 
             return objList;
