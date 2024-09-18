@@ -66,8 +66,8 @@ public final class UfoSerializer {
     }
 
     /**
-     *
-     * @param file
+     * If no file exists yet, this creates a new file.
+     * @param file To initialize
      */
     private static void initFile(final File file) {
         if (!file.exists()) {
@@ -80,13 +80,14 @@ public final class UfoSerializer {
     }
 
     /**
-     *
-     * @param cache
-     * @return
+     * Serialize a map used by this parser to file contents
+     * @param cache Hashmap used by parser
+     * @return A string that can be written to a file
      */
     @NonNull
     public static String serialize(final Map<String, TypeValue> cache) {
         final StringBuilder builder = new StringBuilder();
+
         cache.forEach((key, value) -> {
             builder.append(value.getType()).append(":").append(key).append("=");
 
@@ -99,6 +100,7 @@ public final class UfoSerializer {
 
             builder.append(";\n");
         });
+
         return builder.toString();
     }
 }
