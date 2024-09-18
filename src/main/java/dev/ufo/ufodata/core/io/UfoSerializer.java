@@ -52,7 +52,7 @@ public final class UfoSerializer {
                     } else if (type.startsWith("list<")) {
                         map.put(key, new TypeValue(type, ListFormatter.formatList(type, value)));
                     } else {
-                        map.put(key, new TypeValue(type, ObjectFormatter.objFromString(type, value)));
+                        map.put(key, new TypeValue(type, ObjectFormatter.toObject(type, value)));
                     }
                 }
                 return map;
