@@ -15,7 +15,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -28,12 +28,14 @@ public final class UfoFile {
     Map<String, TypeValue> cache; //no getter since this would be a vulnerability (some data might not be saved)
     @Getter @Setter @NonFinal boolean prettyWriting; //Todo: Implement!
     @Getter @Setter @NonFinal boolean changed; //if this has not changed there is no need to write into the file!
+    @Getter @Setter @NonFinal boolean editedContent;
 
     //private constructor with direct file parameter
     private UfoFile(final File file) {
         this.file = file;
         this.cache = UfoSerializer.deserialize(file);
         this.changed = false;
+        this.editedContent = false;
     }
 
     /**
@@ -140,10 +142,14 @@ public final class UfoFile {
     public void save(boolean force) {
         if (!force && !changed) return; //there has been no change to the data
         QueuedAsyncExecution.queue(() -> {
-            try (final PrintWriter writer = new PrintWriter(this.file)) { //Todo: Test if this overwrites current file contents (it should!)
-                writer.print(UfoSerializer.serialize(this.cache));
+            try (final PrintWriter writer = new PrintWriter(new FileWriter(this.file, !this.editedContent))) { //Todo: Test if this overwrites current file contents (it should!)
+
+                writer.write(UfoSerializer.serialize(this.cache));
                 writer.flush();
-            } catch (final FileNotFoundException exception) {
+                this.editedContent = false;
+                this.changed = false;
+
+            } catch (final Exception exception) {
                 throw new RuntimeException("An error occurred while trying to save contents to: '" + this.file.getName() + "'!", exception);
             }
         });
@@ -157,6 +163,7 @@ public final class UfoFile {
     public void put(final String key, final Object object) {
         this.cache.put(key, new TypeValue(ObjectFormatter.type(object), object));
         this.changed = true;
+        if (cache.containsKey(key)) this.editedContent = true;
     }
 
     /**
@@ -166,6 +173,7 @@ public final class UfoFile {
     public void remove(final String key) {
         this.cache.remove(key);
         this.changed = true;
+        this.editedContent = true;
     }
 
     /**
