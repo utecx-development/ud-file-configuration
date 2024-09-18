@@ -74,42 +74,47 @@ public final class MapFormatter {
         }
 
         return map;
-
     }
 
-    private <T> List<T> getTempList(Class<T> clazz, String key, boolean isKey, Map<String, TypeValue> fileContent) {
-
+    /**
+     * Get either all keys or values of a map as a temporary list
+     * @param clazz Type the list contents should be in
+     * @param key Identifier of this map
+     * @param isKey Do we need the key column or the value column
+     * @param fileContent Content of the UfoFile to read from
+     * @return List containing either all types or values of this map
+     * @param <T> content type
+     */
+    @NonNull
+    @SuppressWarnings("unchecked")
+    private <T> List<T> getTempList(final Class<T> clazz, final String key, final boolean isKey, final Map<String, TypeValue> fileContent) {
+        //check if there is the correct datastructure behind given identifier
         if (!(fileContent.get(key).getValue() instanceof Map<?, ?> map)) {
-            throw new RuntimeException("The key: " + key + " is not an instance of a List but a " + fileContent.get(key).getValue().getClass().getSimpleName());
+            throw new RuntimeException("The content behind key: '" + key + "' is not an instance of a map but a '" + fileContent.get(key).getValue().getClass().getSimpleName() + "'");
         }
 
-        List<?> list;
-
+        //fill the list with contents
+        final List<?> list;
         if (isKey) {
             list = new ArrayList<>(map.keySet());
         } else {
             list = new ArrayList<>(map.values());
         }
 
+        //parse the contents to actual objects
         if (CheckType.isPrimitive(clazz)) {
-
-            final List<T> objList = new ArrayList<>();
-
-            for (Object t : list) {
-                objList.add(ObjectFormatter.toObject(clazz, t));
+            final List<T> objectList = new ArrayList<>();
+            for (final Object object : list) {
+                objectList.add(ObjectFormatter.toObject(clazz, object));
             }
-
-            return objList;
-
-        } else {
-
-            if (!clazz.isInstance(list.getFirst())) {
-                throw new RuntimeException("The class " + clazz.getName() + " is not an instance of " + fileContent.get(key).getValue().getClass().getName());
-            }
-
-            return (List<T>) list;
-
+            return objectList;
         }
-    }
 
+        //do the types match?
+        if (!clazz.isInstance(list.getFirst())) {
+            throw new RuntimeException("The class '" + clazz.getName() + "' is not an instance of '" + fileContent.get(key).getValue().getClass().getName() + "'");
+        }
+
+        return (List<T>) list;
+    }
 }
