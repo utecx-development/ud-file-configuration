@@ -32,7 +32,7 @@ public final class UfoFile {
     //private constructor with direct file parameter
     private UfoFile(final File file) {
         this.file = file;
-        this.cache = FileManager.init(file);
+        this.cache = UfoSerializer.deserialize(file);
         this.changed = false;
     }
 
@@ -141,7 +141,7 @@ public final class UfoFile {
         if (!force && !changed) return; //there has been no change to the data
         QueuedAsyncExecution.queue(() -> {
             try (final PrintWriter writer = new PrintWriter(this.file)) { //Todo: Test if this overwrites current file contents (it should!)
-                writer.print(FileManager.buildFile(this.cache));
+                writer.print(UfoSerializer.serialize(this.cache));
                 writer.flush();
             } catch (final FileNotFoundException exception) {
                 throw new RuntimeException("An error occurred while trying to save contents to: '" + this.file.getName() + "'!", exception);

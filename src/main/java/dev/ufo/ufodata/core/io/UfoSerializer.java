@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @UtilityClass
-public final class FileManager {
+public final class UfoSerializer {
 
     /**
      * 
@@ -20,7 +20,7 @@ public final class FileManager {
      * @return
      */
     @NonNull
-    public static Map<String, TypeValue> init(final File file) {
+    public static Map<String, TypeValue> deserialize(final File file) {
         if (!file.exists()) initFile(file);
         try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
             final Map<String, TypeValue> map = new HashMap<>();
@@ -66,7 +66,7 @@ public final class FileManager {
      *
      * @param file
      */
-    public static void initFile(final File file) {
+    private static void initFile(final File file) {
         if (!file.exists()) {
             try (final PrintWriter writer = new PrintWriter(file)) {
                 writer.print("");
@@ -82,9 +82,8 @@ public final class FileManager {
      * @return
      */
     @NonNull
-    public static String buildFile(final Map<String, TypeValue> cache) {
+    public static String serialize(final Map<String, TypeValue> cache) {
         final StringBuilder builder = new StringBuilder();
-
         cache.forEach((key, value) -> {
             builder.append(value.getType()).append(":").append(key).append("=");
 
@@ -97,7 +96,6 @@ public final class FileManager {
 
             builder.append(";\n");
         });
-
         return builder.toString();
     }
 }
