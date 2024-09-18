@@ -26,7 +26,7 @@ public final class UfoSerializer {
         try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
             final Map<String, TypeValue> map = new HashMap<>();
 
-            //read all of the files contents
+            //read all the files contents
             final StringBuilder builder = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
