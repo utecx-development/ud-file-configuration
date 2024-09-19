@@ -28,7 +28,6 @@ public final class UfoFile {
     Map<String, TypeValue> cache; //no getter since this would be a vulnerability (some data might not be saved)
     @Getter @Setter @NonFinal boolean prettyWriting; //Todo: Implement!
     @Getter @Setter @NonFinal boolean changed; //if this has not changed there is no need to write into the file!
-    @Getter @Setter @NonFinal boolean editedContent;
 
     //private constructor with direct file parameter
     private UfoFile(final File file) {
@@ -142,11 +141,10 @@ public final class UfoFile {
     public void save(boolean force) {
         if (!force && !changed) return; //there has been no change to the data
         QueuedAsyncExecution.queue(() -> {
-            try (final PrintWriter writer = new PrintWriter(new FileWriter(this.file, !this.editedContent))) { //Todo: Test if this overwrites current file contents (it should!)
+            try (final PrintWriter writer = new PrintWriter(new FileWriter(this.file) { //Todo: Test if this overwrites current file contents (it should!)
 
                 writer.write(UfoSerializer.serialize(this.cache));
                 writer.flush();
-                this.editedContent = false;
                 this.changed = false;
 
             } catch (final Exception exception) {
@@ -163,7 +161,6 @@ public final class UfoFile {
     public void put(final String key, final Object object) {
         this.cache.put(key, new TypeValue(ObjectFormatter.type(object), object));
         this.changed = true;
-        if (cache.containsKey(key)) this.editedContent = true;
     }
 
     /**
@@ -173,7 +170,6 @@ public final class UfoFile {
     public void remove(final String key) {
         this.cache.remove(key);
         this.changed = true;
-        this.editedContent = true;
     }
 
     /**
