@@ -34,7 +34,6 @@ public final class UfoFile {
         this.file = file;
         this.cache = UfoSerializer.deserialize(file);
         this.changed = false;
-        this.editedContent = false;
     }
 
     /**
@@ -141,7 +140,7 @@ public final class UfoFile {
     public void save(boolean force) {
         if (!force && !changed) return; //there has been no change to the data
         QueuedAsyncExecution.queue(() -> {
-            try (final PrintWriter writer = new PrintWriter(new FileWriter(this.file) { //Todo: Test if this overwrites current file contents (it should!)
+            try (final PrintWriter writer = new PrintWriter(new FileWriter(this.file))) { //Todo: Test if this overwrites current file contents (it should!)
 
                 writer.write(UfoSerializer.serialize(this.cache));
                 writer.flush();
