@@ -59,98 +59,75 @@ public final class JsonFormatter {
     }
 
     /**
-     *
-     * @param json
-     * @return
+     * Generate an UfoFiles contents from an input JSON string
+     * Please ensure that you're input is in a compatible format!
+     * @param json The JSON you want to convert
+     * @return Contents ready to be used within an UfoFile
      */
     @NonNull
     public static Map<String, TypeValue> fromJson(String json) {
-        json = json.trim();
+        json = json.trim(); //remove empty spaces & line breaks from JSON (cleanup)
 
-        if (!json.startsWith("{") || !json.endsWith("}")) {
-            throw new RuntimeException("Invalide json: " + json);
-        }
-
+        //check if at least basic premises are met by input
+        if (!json.startsWith("{") || !json.endsWith("}")) throw new RuntimeException("Invalid JSON: '" + json + "'");
+        //cut outer brackets!
         json = json.substring(1, json.length() - 1).trim();
 
-        final Map<String, TypeValue> jsonContent = new HashMap<>();
-        int length = json.length();
+        final Map<String, TypeValue> content = new HashMap<>();
+        final int length = json.length();
         int index = 0;
 
+        //loop through every character index within this string
         while (index < length) {
-
             index = skipSpace(json, index);
 
-            if (json.charAt(index) != '"') {
-                throw new RuntimeException("Invalid key! The key has to start with \"!");
-            }
+            //every key has to be a string!
+            if (json.charAt(index) != '"') throw new RuntimeException("Invalid key! The key has to start with \"!");
 
-            int keyStart = index + 1;
-            int keyEnd = json.indexOf('"', keyStart);
-            String key = json.substring(keyStart, keyEnd);
+            final int keyStart = index + 1;
+            final int keyEnd = json.indexOf('"', keyStart);
+            final String key = json.substring(keyStart, keyEnd);
 
-            index = keyEnd + 1;
-
-            index = skipSpace(json, index);
-
-            if (json.charAt(index) != ':') {
-                throw new RuntimeException("Invalid json format! No ':' found after key!");
-            }
-
-            index++;
-            index = skipSpace(json, index);
+            //invalid JSON
+            index = skipSpace(json, keyEnd + 1);
+            if (json.charAt(index) != ':') throw new RuntimeException("Invalid JSON: No ':' found after key!");
+            index = skipSpace(json, index + 1);
 
             final TypeValue value;
 
             switch (json.charAt(index)) {
-
                 case '{' -> {
-
                     int closingBraceIndex = findClosing(json, index, '{', '}');
-
                     value = new TypeValue("object", ObjectFormatter.toObject(
                             "object", json.substring(index, closingBraceIndex + 1)
                     ));
-
                     index = closingBraceIndex + 1;
-
                 }
                 case '[' -> {
-
                     int closingBracketIndex = findClosing(json, index, '[', ']');
                     String arrayJson = json.substring(index, closingBracketIndex + 1);
-
                     if (arrayJson.length() > 2) {
                         value = parseArray(arrayJson);
                     } else {
                         value = null;
                     }
-
                     index = closingBracketIndex + 1;
-
                 }
                 case '"' -> {
-
                     int valueEnd = json.indexOf('"', index + 1);
                     String strValue = json.substring(index + 1, valueEnd);
                     value = new TypeValue("string", strValue);
                     index = valueEnd + 1;
-
                 }
-
                 default -> {
-
                     int valueEnd = findValueEnd(json, index);
-
                     value = parseType(json.substring(index, valueEnd));
-
                     index = valueEnd;
-
                 }
             }
 
             if (value != null) {
-                jsonContent.put(key, value);
+                content.put(key, value);
             }
 
             index = skipSpace(json, index);
@@ -159,12 +136,16 @@ public final class JsonFormatter {
                 index++;
             }
         }
-
-
-        return jsonContent;
+        return content;
     }
 
-    private static int skipSpace(String json, int index) {
+    /**
+     *
+     * @param json
+     * @param index
+     * @return
+     */
+    private static int skipSpace(final String json, int index) {
         //add +1 if the current char is a void (whitespace)
         while (index < json.length() && Character.isWhitespace(json.charAt(index))) {
             index++;
