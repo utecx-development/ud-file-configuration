@@ -2,6 +2,7 @@ package dev.ufo.ufodata.core.format;
 
 import dev.ufo.ufodata.core.UDObject;
 import dev.ufo.ufodata.lib.TypeValue;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
@@ -10,58 +11,66 @@ import java.util.List;
 import java.util.Map;
 
 @UtilityClass
-public class JsonFormatter {
+public final class JsonFormatter {
 
-    public static String toJson(Map<String, TypeValue> cache) {
-        StringBuilder s = new StringBuilder();
+    /**
+     * Generates JSON from the given UD contents
+     * @param cache UfoFile's contents
+     * @return The generated JSON
+     */
+    @NonNull
+    public static String toJson(final Map<String, TypeValue> cache) {
+        final StringBuilder builder = new StringBuilder();
 
-        s.append("{\n");
+        //open a new object
+        builder.append("{\n");
 
-        List<String> keys = new ArrayList<>(cache.keySet());
-        List<TypeValue> typeValues = new ArrayList<>(cache.values());
+        //loop through contents to generate JSON
+        for (Map.Entry<String, TypeValue> entry : cache.entrySet()) {
+            String key = entry.getKey();
+            TypeValue value = entry.getValue();
+            //format key
+            builder.append("\"").append(key).append("\"").append(":");
 
-        for (int i = 0; i != cache.size(); i++) {
+            //check if given entry is a simple datatype
+            final boolean primitive = !(value.getType().startsWith("map") || value.getType().startsWith("list") || value.getType().startsWith("object"));
 
-            String key = keys.get(i);
-            TypeValue value = typeValues.get(i);
+            //open string
+            if (primitive) builder.append("\"");
 
-            s.append("\"")
-                    .append(key)
-                    .append("\"")
-                    .append(":");
-
-            boolean b = !(value.getType().startsWith("map") || value.getType().startsWith("list") || value.getType().startsWith("object"));
-
-            if (b) {
-                s.append("\"");
-            }
-
-            if (value.getType().startsWith("object")){
-                if (value.getValue() instanceof UDObject object) {
-                    s.append(object.toJson());
+            //format object if extends UDObject
+            if (value.getType().startsWith("object")) {
+                if (value.getValue() instanceof final UDObject object) {
+                    builder.append(object.toJson());
                 } else {
                     throw new RuntimeException("An error occurred while parsing an instance of: " + value.getValue().getClass().getSimpleName());
                 }
             } else {
-                s.append(value.getValue());
+                builder.append(value.getValue());
             }
 
-            if (b) {
-                s.append("\"");
-            }
+            //close string
+            if (primitive) builder.append("\"");
 
-            if (i != cache.size() - 1) {
-                s.append(",\n");
-            }
-
+            //add a comma & a line break
+            builder.append(",\n");
         }
 
-        s.append("\n}");
+        //remove the last 3 chars incase there is a content in the JSON
+        if (builder.length() > 10) builder.setLength(builder.length() - 3); //10 is experimental here.
+        //close the object
+        builder.append("}");
 
-        return s.toString();
+        //return generated JSON
+        return builder.toString();
     }
 
-
+    /**
+     *
+     * @param json
+     * @return
+     */
+    @NonNull
     public static Map<String, TypeValue> fromJson(String json) {
         json = json.trim();
 
