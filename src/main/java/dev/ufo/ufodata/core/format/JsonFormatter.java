@@ -26,9 +26,7 @@ public final class JsonFormatter {
         builder.append("{\n");
 
         //loop through contents to generate JSON
-        for (Map.Entry<String, TypeValue> entry : cache.entrySet()) {
-            String key = entry.getKey();
-            TypeValue value = entry.getValue();
+        cache.forEach((key, value) -> {
             //format key
             builder.append("\"").append(key).append("\"").append(":");
 
@@ -54,7 +52,7 @@ public final class JsonFormatter {
 
             //add a comma & a line break
             builder.append(",\n");
-        }
+        });
 
         //remove the last 3 chars incase there is a content in the JSON
         if (builder.length() > 10) builder.setLength(builder.length() - 3); //10 is experimental here.
