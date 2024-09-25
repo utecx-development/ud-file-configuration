@@ -21,7 +21,6 @@ public final class JsonFormatter {
     @NonNull
     public static String toJson(final Map<String, TypeValue> cache) {
         final StringBuilder builder = new StringBuilder();
-
         //open a new object
         builder.append("{\n");
 
@@ -29,10 +28,8 @@ public final class JsonFormatter {
         cache.forEach((key, value) -> {
             //format key
             builder.append("\"").append(key).append("\"").append(":");
-
             //check if given entry is a simple datatype
             final boolean primitive = !(value.getType().startsWith("map") || value.getType().startsWith("list") || value.getType().startsWith("object"));
-
             //open string
             if (primitive) builder.append("\"");
 
@@ -49,7 +46,6 @@ public final class JsonFormatter {
 
             //close string
             if (primitive) builder.append("\"");
-
             //add a comma & a line break
             builder.append(",\n");
         });
@@ -58,7 +54,6 @@ public final class JsonFormatter {
         if (builder.length() > 10) builder.setLength(builder.length() - 3); //10 is experimental here.
         //close the object
         builder.append("}");
-
         //return generated JSON
         return builder.toString();
     }
