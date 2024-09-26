@@ -281,7 +281,10 @@ public final class JsonFormatter {
      */
     private static TypeValue findTypeAndBundle(final String data) {
         switch (data) {
-            case "null", null -> { //empty value
+            case "null" -> { //empty value
+                return null;
+            }
+            case null -> {
                 return null;
             }
             case "true" -> { //boolean true
