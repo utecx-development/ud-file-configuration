@@ -91,10 +91,10 @@ public final class JsonFormatter {
             //invalid JSON
             index = skipSpace(json, keyEnd + 1);
             if (json.charAt(index) != ':') throw new RuntimeException("Invalid JSON: No ':' found after key!");
+
+            //check what type of content is found here!
             index = skipSpace(json, index + 1);
-
             final TypeValue value;
-
             switch (json.charAt(index)) {
                 case '{' -> {
                     int closingBraceIndex = findClosing(json, index, '{', '}');
@@ -121,7 +121,7 @@ public final class JsonFormatter {
                 }
                 default -> {
                     int valueEnd = findValueEnd(json, index);
-                    value = parseType(json.substring(index, valueEnd));
+                    value = findTypeAndBundle(json.substring(index, valueEnd));
                     index = valueEnd;
                 }
             }
@@ -154,7 +154,14 @@ public final class JsonFormatter {
         return index;
     }
 
-    //find closing to opening such as "[ -> ]; { -> }"
+    /**
+     * find closing to opening such as "[ -> ]; { -> }"
+     * @param json
+     * @param index
+     * @param open
+     * @param close
+     * @return
+     */
     private static int findClosing(String json, int index, char open, char close) {
         int braceCount = 0;
         for (int i = index; i < json.length(); i++) {
@@ -167,13 +174,15 @@ public final class JsonFormatter {
                 }
             }
         }
-
         throw new RuntimeException("no " + close + " found for " + open);
-
     }
 
+    /**
+     *
+     * @param jsonArray
+     * @return
+     */
     private static TypeValue parseArray(String jsonArray) {
-
         jsonArray = jsonArray.trim();
         if (!(jsonArray.startsWith("[") || jsonArray.endsWith("]"))) {
             throw new RuntimeException("No valid array!");
@@ -232,7 +241,7 @@ public final class JsonFormatter {
                 default -> {
 
                     valueEnd = findValueEnd(jsonArray, index);
-                    TypeValue tv = parseType(jsonArray.substring(index, valueEnd));
+                    TypeValue tv = findTypeAndBundle(jsonArray.substring(index, valueEnd));
                     if (tv != null){
                         type = tv.getType() + ">";
                         arrays.add(tv.getValue());
@@ -248,10 +257,15 @@ public final class JsonFormatter {
                 index++;
             }
         }
-
         return new TypeValue(s.append(type).toString(), arrays);
     }
 
+    /**
+     *
+     * @param json
+     * @param index
+     * @return
+     */
     private static int findValueEnd(String json, int index) {
         while (index < json.length() && !Character.isWhitespace(json.charAt(index))
                 && json.charAt(index) != ',' && json.charAt(index) != ']' && json.charAt(index) != '}') {
@@ -260,32 +274,30 @@ public final class JsonFormatter {
         return index;
     }
 
-    private static TypeValue parseType(String type) {
-        switch (type) {
-            case "null" -> {
+    /**
+     * Checks the type of the given input. Can either be null, "null", a booleanish value, an integer or a double!
+     * @param data Given input to check
+     * @return A bundled TypeValue object containing the correct type & the data!
+     */
+    private static TypeValue findTypeAndBundle(final String data) {
+        switch (data) {
+            case "null", null -> { //empty value
                 return null;
             }
-            case "true" -> {
+            case "true" -> { //boolean true
                 return new TypeValue("boolean", true);
             }
-            case "false" -> {
+            case "false" -> { //boolean false
                 return new TypeValue("boolean", false);
             }
-
-            case null -> throw new RuntimeException("""
-                    Type from json was null!
-                    This error should not be happening if you do have a value after every key.
-                    Please contact our staff team! https://discord.gg/gzxrub5ABQ
-                    """);
-
-            default -> {
+            default -> { //try format as integer or double
                 try {
-                    return new TypeValue("int", Integer.parseInt(type));
-                } catch (NumberFormatException e) {
+                    return new TypeValue("int", Integer.parseInt(data)); //try integer
+                } catch (final NumberFormatException exception) {
                     try {
-                        return new TypeValue("double", Double.parseDouble(type));
-                    } catch (NumberFormatException ex) {
-                        throw new RuntimeException("Unknown type: " + type);
+                        return new TypeValue("double", Double.parseDouble(data)); //try double
+                    } catch (final NumberFormatException exception2) {
+                        throw new RuntimeException("Unknown type: '" + data + "'");
                     }
                 }
             }
