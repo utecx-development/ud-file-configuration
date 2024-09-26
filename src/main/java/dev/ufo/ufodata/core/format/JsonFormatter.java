@@ -261,12 +261,12 @@ public final class JsonFormatter {
     }
 
     /**
-     *
-     * @param json
-     * @param index
-     * @return
+     * Skip to the end index of the current read value
+     * @param json Json to check for value end
+     * @param index Current cursor index
+     * @return New index, paced forward to be the value's end index
      */
-    private static int findValueEnd(String json, int index) {
+    private static int findValueEnd(final String json, int index) {
         while (index < json.length() && !Character.isWhitespace(json.charAt(index))
                 && json.charAt(index) != ',' && json.charAt(index) != ']' && json.charAt(index) != '}') {
             index++;
