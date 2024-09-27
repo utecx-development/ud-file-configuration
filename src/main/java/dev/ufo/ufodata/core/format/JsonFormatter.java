@@ -140,10 +140,10 @@ public final class JsonFormatter {
     }
 
     /**
-     *
-     * @param json
-     * @param index
-     * @return
+     * Skip all empty spaces (Todo: This should not be necessary! Use either json.trim() or this!)
+     * @param json JSON blob to work in
+     * @param index Current index
+     * @return Next available index where there is actually content there
      */
     private static int skipSpace(final String json, int index) {
         //add +1 if the current char is a void (whitespace)
