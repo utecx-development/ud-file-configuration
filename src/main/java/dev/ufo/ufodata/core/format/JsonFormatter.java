@@ -178,86 +178,69 @@ public final class JsonFormatter {
     }
 
     /**
-     *
-     * @param jsonArray
-     * @return
+     * Parses an array represented by a JSON blob.
+     * @param jsonArray Given JSON blob to work with.
+     * @return The parsed array in UfoData's TypeValue structure
      */
     private static TypeValue parseArray(String jsonArray) {
-        jsonArray = jsonArray.trim();
-        if (!(jsonArray.startsWith("[") || jsonArray.endsWith("]"))) {
-            throw new RuntimeException("No valid array!");
-        }
+        //not really necessary here because has been done before but for convenience reasons
+        jsonArray = jsonArray.trim(); //remove empty spaces & line breaks from JSON (cleanup)
 
+        //check if at least basic premises are met by input
+        if (!(jsonArray.startsWith("[") || jsonArray.endsWith("]"))) throw new RuntimeException("No valid array!");
+        //cut outer brackets
         jsonArray = jsonArray.substring(1, jsonArray.length() - 1).trim();
-        int length = jsonArray.length();
-        int index = 0;
 
-        String type = "";
-        StringBuilder s = new StringBuilder();
-        s.append("list<");
-        List<Object> arrays = new ArrayList<>();
+        final List<Object> array = new ArrayList<>(); //collects all of the arrays contents
+        String type = ""; //searching for content type (problem: Can be assigned multiple times as of now)
+        int length = jsonArray.length(); //length of the full JSON Array before we work with it
+        int index = 0; //cursor
 
         while (index < length) {
-
             index = skipSpace(jsonArray, index);
 
-            int valueEnd;
             switch (jsonArray.charAt(index)) {
+                case '{' -> {
+                    final int valueEnd = findClosing(jsonArray, index, '{', '}');
+                    array.add(jsonArray.substring(index, valueEnd + 1));
 
-                case '{' ->{
-
-                    type = "object>";
-
-                    valueEnd = findClosing(jsonArray, index, '{', '}');
-                    arrays.add(jsonArray.substring(index, valueEnd + 1));
-
+                    type = "object";
                     index = valueEnd + 1;
-
                 }
+                case '[' -> {
+                    final int valueEnd = findClosing(jsonArray, index, '[', ']');
+                    TypeValue typeValue = parseArray(jsonArray.substring(index, valueEnd + 1));
+                    array.add(typeValue.getValue());
 
-                case '[' ->{
-
-                    valueEnd = findClosing(jsonArray, index, '[', ']');
-                    TypeValue tv = parseArray(jsonArray.substring(index, valueEnd + 1));
-                    arrays.add(tv.getValue());
-
-                    type = tv.getType() + ">";
-
+                    type = typeValue.getType();
                     index = valueEnd + 1;
-
                 }
+                case '"' -> {
+                    final int valueEnd = jsonArray.indexOf('"', index + 1);
+                    array.add(jsonArray.substring(index + 1, valueEnd));
 
-                case '"' ->{
-
-                    valueEnd = jsonArray.indexOf('"', index + 1);
-                    arrays.add(jsonArray.substring(index + 1, valueEnd));
-
-                    type = "string>";
-
+                    type = "string";
                     index = valueEnd + 1;
-
                 }
-
                 default -> {
-
-                    valueEnd = findValueEnd(jsonArray, index);
-                    TypeValue tv = findTypeAndBundle(jsonArray.substring(index, valueEnd));
-                    if (tv != null){
-                        type = tv.getType() + ">";
-                        arrays.add(tv.getValue());
+                    final int valueEnd = findValueEnd(jsonArray, index);
+                    TypeValue typeValue = findTypeAndBundle(jsonArray.substring(index, valueEnd));
+                    if (typeValue != null){
+                        type = typeValue.getType();
+                        array.add(typeValue.getValue());
                     }
-
                     index = valueEnd;
-
                 }
             }
 
+            //skip the comma at the end of the line
             index = skipSpace(jsonArray, index);
             if (index < length && jsonArray.charAt(index) == ',') {
                 index++;
             }
         }
-        return new TypeValue(s.append(type).toString(), arrays);
+        //package results into TypeValue and return them
+        return new TypeValue("list<" + type + ">", array);
     }
 
     /**
@@ -281,19 +264,15 @@ public final class JsonFormatter {
      */
     private static TypeValue findTypeAndBundle(final String data) {
         switch (data) {
-            case "null" -> { //empty value
+            case "null"://empty value
                 return null;
-            }
-            case null -> {
+            case null:
                 return null;
-            }
-            case "true" -> { //boolean true
+            case "true"://boolean true
                 return new TypeValue("boolean", true);
-            }
-            case "false" -> { //boolean false
+            case "false"://boolean false
                 return new TypeValue("boolean", false);
-            }
-            default -> { //try format as integer or double
+            default://try format as integer or double
                 try {
                     return new TypeValue("int", Integer.parseInt(data)); //try integer
                 } catch (final NumberFormatException exception) {
@@ -303,7 +282,6 @@ public final class JsonFormatter {
                         throw new RuntimeException("Unknown type: '" + data + "'");
                     }
                 }
-            }
         }
     }
 }
