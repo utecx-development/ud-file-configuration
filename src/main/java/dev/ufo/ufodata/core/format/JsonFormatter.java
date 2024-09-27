@@ -97,14 +97,14 @@ public final class JsonFormatter {
             final TypeValue value;
             switch (json.charAt(index)) {
                 case '{' -> {
-                    int closingBraceIndex = findClosing(json, index, '{', '}');
+                    int closingBraceIndex = findClosingBracketIndex(json, index, '{', '}');
                     value = new TypeValue("object", ObjectFormatter.toObject(
                             "object", json.substring(index, closingBraceIndex + 1)
                     ));
                     index = closingBraceIndex + 1;
                 }
                 case '[' -> {
-                    int closingBracketIndex = findClosing(json, index, '[', ']');
+                    int closingBracketIndex = findClosingBracketIndex(json, index, '[', ']');
                     String arrayJson = json.substring(index, closingBracketIndex + 1);
                     if (arrayJson.length() > 2) {
                         value = parseArray(arrayJson);
@@ -155,26 +155,26 @@ public final class JsonFormatter {
     }
 
     /**
-     * find closing to opening such as "[ -> ]; { -> }"
-     * @param json
-     * @param index
-     * @param open
-     * @param close
-     * @return
+     * find index of closing bracket to opening bracket such as "[ -> ]; { -> }"
+     * @param json JSON blob to check on
+     * @param index current bracket index
+     * @param openingChar opening char (Todo: Automatically find closingChar via a mapping)
+     * @param closingChar closing char to search for
+     * @return index of closing char to work with
      */
-    private static int findClosing(String json, int index, char open, char close) {
+    private static int findClosingBracketIndex(String json, int index, char openingChar, char closingChar) {
         int braceCount = 0;
         for (int i = index; i < json.length(); i++) {
-            if (json.charAt(i) == open) {
+            if (json.charAt(i) == openingChar) {
                 braceCount++;
-            } else if (json.charAt(i) == close) {
+            } else if (json.charAt(i) == closingChar) {
                 braceCount--;
                 if (braceCount == 0) {
                     return i;
                 }
             }
         }
-        throw new RuntimeException("no " + close + " found for " + open);
+        throw new RuntimeException("no " + closingChar + " found for " + openingChar);
     }
 
     /**
@@ -203,13 +203,13 @@ public final class JsonFormatter {
             //check type of input by checking which char introduces next part
             switch (jsonArray.charAt(index)) {
                 case '{' -> {
-                    final int valueEnd = findClosing(jsonArray, index, '{', '}');
+                    final int valueEnd = findClosingBracketIndex(jsonArray, index, '{', '}');
                     array.add(jsonArray.substring(index, valueEnd + 1)); //Todo: Test, Is this really working? There seems to be something missing here
                     type = "object";
                     index = valueEnd + 1;
                 }
                 case '[' -> {
-                    final int valueEnd = findClosing(jsonArray, index, '[', ']');
+                    final int valueEnd = findClosingBracketIndex(jsonArray, index, '[', ']');
                     final TypeValue typeValue = parseArray(jsonArray.substring(index, valueEnd + 1)); //inner array
                     array.add(typeValue.getValue());
                     type = typeValue.getType();
