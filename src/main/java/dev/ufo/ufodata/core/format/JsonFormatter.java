@@ -196,35 +196,34 @@ public final class JsonFormatter {
         int length = jsonArray.length(); //length of the full JSON Array before we work with it
         int index = 0; //cursor
 
+        //loop through the arrays contents
         while (index < length) {
             index = skipSpace(jsonArray, index);
 
+            //check type of input by checking which char introduces next part
             switch (jsonArray.charAt(index)) {
                 case '{' -> {
                     final int valueEnd = findClosing(jsonArray, index, '{', '}');
-                    array.add(jsonArray.substring(index, valueEnd + 1));
-
+                    array.add(jsonArray.substring(index, valueEnd + 1)); //Todo: Test, Is this really working? There seems to be something missing here
                     type = "object";
                     index = valueEnd + 1;
                 }
                 case '[' -> {
                     final int valueEnd = findClosing(jsonArray, index, '[', ']');
-                    TypeValue typeValue = parseArray(jsonArray.substring(index, valueEnd + 1));
+                    final TypeValue typeValue = parseArray(jsonArray.substring(index, valueEnd + 1)); //inner array
                     array.add(typeValue.getValue());
-
                     type = typeValue.getType();
                     index = valueEnd + 1;
                 }
                 case '"' -> {
                     final int valueEnd = jsonArray.indexOf('"', index + 1);
                     array.add(jsonArray.substring(index + 1, valueEnd));
-
                     type = "string";
                     index = valueEnd + 1;
                 }
                 default -> {
                     final int valueEnd = findValueEnd(jsonArray, index);
-                    TypeValue typeValue = findTypeAndBundle(jsonArray.substring(index, valueEnd));
+                    final TypeValue typeValue = findTypeAndBundle(jsonArray.substring(index, valueEnd));
                     if (typeValue != null){
                         type = typeValue.getType();
                         array.add(typeValue.getValue());
@@ -239,6 +238,7 @@ public final class JsonFormatter {
                 index++;
             }
         }
+
         //package results into TypeValue and return them
         return new TypeValue("list<" + type + ">", array);
     }
