@@ -262,25 +262,12 @@ public final class JsonFormatter {
      * @return A bundled TypeValue object containing the correct type & the data!
      */
     private static TypeValue findTypeAndBundle(final String data) {
-        switch (data) {
-            case "null"://empty value
-                return null;
-            case null:
-                return null;
-            case "true"://boolean true
-                return new TypeValue("boolean", true);
-            case "false"://boolean false
-                return new TypeValue("boolean", false);
-            default://try format as integer or double
-                try {
-                    return new TypeValue("int", Integer.parseInt(data)); //try integer
-                } catch (final NumberFormatException exception) {
-                    try {
-                        return new TypeValue("double", Double.parseDouble(data)); //try double
-                    } catch (final NumberFormatException exception2) {
-                        throw new RuntimeException("Unknown type: '" + data + "'");
-                    }
-                }
-        }
+        return switch (data) {
+            case "null" -> null;
+            case null -> null;
+            case "true" -> new TypeValue("boolean", true);
+            case "false" -> new TypeValue("boolean", false);
+            default -> NumberSerializer.serialize(data);
+        };
     }
 }
