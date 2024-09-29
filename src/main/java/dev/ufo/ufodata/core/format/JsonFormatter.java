@@ -92,7 +92,7 @@ public final class JsonFormatter {
             index = skipSpace(json, keyEnd + 1);
             if (json.charAt(index) != ':') throw new RuntimeException("Invalid JSON: No ':' found after key!");
 
-            //check what type of content is found here!
+            //check what type of content is found here & read it
             index = skipSpace(json, index + 1);
             final TypeValue value;
             switch (json.charAt(index)) {
@@ -126,12 +126,11 @@ public final class JsonFormatter {
                 }
             }
 
-            if (value != null) {
-                content.put(key, value);
-            }
+            //value actually can't be null here, but check for safety??
+            if (value != null) content.put(key, value);
 
+            //skip comma at the end of line
             index = skipSpace(json, index);
-
             if (index < length && json.charAt(index) == ',') {
                 index++;
             }
