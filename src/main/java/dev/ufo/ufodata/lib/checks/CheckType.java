@@ -14,7 +14,8 @@ public final class CheckType {
      * @return true if it's a map or a list
      */
     public static boolean isListOrMap(final Class<?> type) {
-        return type == Map.class || type == List.class;
+        return List.class.isAssignableFrom(type) ||
+                Map.class.isAssignableFrom(type);
     }
 
     /**
