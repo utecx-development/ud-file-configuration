@@ -1,6 +1,7 @@
 package dev.ufo.ufodata.core.format;
 
 import dev.ufo.ufodata.core.UDObject;
+import dev.ufo.ufodata.lib.NumberParser;
 import dev.ufo.ufodata.lib.TypeValue;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
@@ -267,7 +268,7 @@ public final class JsonFormatter {
             case null -> null;
             case "true" -> new TypeValue("boolean", true);
             case "false" -> new TypeValue("boolean", false);
-            default -> NumberSerializer.serialize(data);
+            default -> NumberParser.serialize(data);
         };
     }
 }

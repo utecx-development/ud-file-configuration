@@ -30,15 +30,17 @@ jobs:
           mkdir -p $HOME/.m2
           echo "<settings><servers><server><id>github</id><username>${{ github.actor }}</username><password>${{ secrets.GITHUB_TOKEN }}</password></server></servers></settings>" > $HOME/.m2/settings.xml
 
-      # Build the project using Maven
+      # Build the project using Maven (this will compile the code)
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn -B compile --quiet --file pom.xml
 
-      # Run tests using Maven
+      # Run tests using Maven (with detailed output)
       - name: Run tests
-        run: mvn test
+        run: mvn test --quiet -Dmaven.test.failure.ignore=false --file pom.xml
 
-      # Publish the JAR to GitHub Packages if on the main branch
+      # Publish the JAR to GitHub Packages if on the main branch and tests pass
       - name: Publish JAR
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: mvn deploy
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
+        run: |
+          mvn deploy --quiet -DskipTests --file pom.xml \
+          -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/${{ github.repository }}

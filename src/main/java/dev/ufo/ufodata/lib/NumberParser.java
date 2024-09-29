@@ -1,17 +1,19 @@
-package dev.ufo.ufodata.core.format;
+package dev.ufo.ufodata.lib;
 
-import dev.ufo.ufodata.lib.TypeValue;
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
 
-public class NumberSerializer {
+@UtilityClass
+public final class NumberParser {
 
+    @NonNull
     public static TypeValue serialize(final String data) {
-
         try {
             return new TypeValue("int", Integer.parseInt(data)); //try integer
         } catch (final NumberFormatException ignored) {}
 
         try {
-            return new TypeValue("long", Long.parseLong(data));
+            return new TypeValue("long", Long.parseLong(data)); //try long
         } catch (NumberFormatException ignored) {}
 
         try {
@@ -23,7 +25,5 @@ public class NumberSerializer {
         } catch (final NumberFormatException ignored) {}
 
         throw new RuntimeException("Unknown type: '" + data + "'");
-
     }
-
 }

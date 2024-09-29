@@ -25,7 +25,7 @@ public abstract class UDObject {
                 final String fieldType = field.getType().getSimpleName().toLowerCase();
 
                 String valueRepresentation;
-                if (fieldValue != null && CheckType.isPrimitive(field.getType()) && !(fieldValue instanceof String)) {
+                if (fieldValue != null && CheckType.isNotPrimitive(field.getType()) && !(fieldValue instanceof String)) {
                     valueRepresentation = fieldValue.toString();
                 } else {
                     valueRepresentation = fieldValue != null ? fieldValue.toString() : "null";
@@ -68,7 +68,7 @@ public abstract class UDObject {
                     builder.append("null");
                 } else if (fieldValue instanceof String) {
                     builder.append("\"").append(fieldValue).append("\"");
-                } else if (CheckType.isPrimitive(field.getType()) || fieldValue instanceof Number || fieldValue instanceof Boolean) {
+                } else if (CheckType.isNotPrimitive(field.getType()) || fieldValue instanceof Number || fieldValue instanceof Boolean) {
                     builder.append(fieldValue);
                 } else {
                     builder.append("\"").append(fieldValue).append("\"");

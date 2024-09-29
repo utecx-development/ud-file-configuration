@@ -6,7 +6,7 @@
 
     <groupId>dev.ufo</groupId>
     <artifactId>ufodata</artifactId>
-    <version>0.3.1</version>
+    <version>0.3.1-SNAPSHOT</version>  <!-- SNAPSHOT allows maven to republish same version -->
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -21,12 +21,11 @@
             <version>1.18.34</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.8.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/UfoMc/ud-file-configuration</url>
-        </repository>
-    </distributionManagement>
 </project>
