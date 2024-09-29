@@ -30,4 +30,5 @@ jobs:
 
     - name: Publish JAR
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      run: mvn deploy
+      run: mvn deploy -DaltDeploymentRepository=ud-file-configuration::default::https://github.com/UfoMc/ud-file-configuration
+
