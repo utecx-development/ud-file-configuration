@@ -38,7 +38,7 @@ jobs:
       - name: Run tests
         run: mvn test
 
-      # Publish the JAR to GitHub Packages if on the main branch
+      # Publish the JAR to GitHub Packages if on the main branch and tests pass
       - name: Publish JAR
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
         run: mvn deploy
