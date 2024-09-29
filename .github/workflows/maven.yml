@@ -34,9 +34,9 @@ jobs:
       - name: Build with Maven
         run: mvn -B compile --quiet --file pom.xml
 
-      # Run tests using Maven (without --quiet to see detailed output)
+      # Run tests using Maven (with detailed output)
       - name: Run tests
-        run: mvn test --file pom.xml
+        run: mvn test -Dmaven.test.failure.ignore=false --file pom.xml
 
       # Publish the JAR to GitHub Packages if on the main branch and tests pass
       - name: Publish JAR
