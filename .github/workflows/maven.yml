@@ -36,10 +36,7 @@ jobs:
 
       # Run tests using Maven (with detailed output)
       - name: Run tests
-        run: |
-          mvn test --file pom.xml
-          echo "Test results:"
-          mvn surefire-report:report-only
+        run: mvn test --quiet -Dmaven.test.failure.ignore=false --file pom.xml
 
       # Publish the JAR to GitHub Packages if on the main branch and tests pass
       - name: Publish JAR
