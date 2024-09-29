@@ -127,7 +127,7 @@ public final class UfoFile {
         }
 
         //format or cast return type
-        if (CheckType.isPrimitive(clazz)) {
+        if (CheckType.isNotPrimitive(clazz)) {
             return ObjectFormatter.toObject(clazz, object);
         }
         return clazz.cast(object);

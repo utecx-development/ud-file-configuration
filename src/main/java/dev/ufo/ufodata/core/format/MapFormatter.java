@@ -102,7 +102,7 @@ public final class MapFormatter {
         }
 
         //parse the contents to actual objects
-        if (CheckType.isPrimitive(clazz)) {
+        if (CheckType.isNotPrimitive(clazz)) {
             final List<T> objectList = new ArrayList<>();
             for (final Object object : list) {
                 objectList.add(ObjectFormatter.toObject(clazz, object));

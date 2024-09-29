@@ -63,7 +63,7 @@ public final class ListFormatter {
         }
 
         //check if the given lists contents are primitives
-        if (CheckType.isPrimitive(clazz)) {
+        if (CheckType.isNotPrimitive(clazz)) {
             final List<T> objectList = new ArrayList<>();
             for (Object object : list) {
                 objectList.add(ObjectFormatter.toObject(clazz, object));
