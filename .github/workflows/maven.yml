@@ -32,13 +32,13 @@ jobs:
 
       # Build the project using Maven (this will compile the code)
       - name: Build with Maven
-        run: mvn -B compile --file pom.xml
+        run: mvn -B compile --quiet --file pom.xml
 
       # Run tests using Maven
       - name: Run tests
-        run: mvn test --file pom.xml
+        run: mvn test --quiet --file pom.xml
 
       # Publish the JAR to GitHub Packages if on the main branch and tests pass
       - name: Publish JAR
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
-        run: mvn deploy --file pom.xml
+        run: mvn deploy --quiet --file pom.xml
