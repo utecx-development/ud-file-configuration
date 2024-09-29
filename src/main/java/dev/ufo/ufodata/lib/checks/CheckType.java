@@ -18,11 +18,11 @@ public final class CheckType {
     }
 
     /**
-     * Checks if a given type is primitive
+     * Checks if a given type is not primitive
      * @param type the given class
      * @return true if it is a primitive type
      */
-    public static boolean isPrimitive(final Class<?> type) {
+    public static boolean isNotPrimitive(final Class<?> type) {
         return !type.isPrimitive() &&
                 type != String.class && //although a String is NOT a primitive - this is ok here.
                 type != Integer.class &&

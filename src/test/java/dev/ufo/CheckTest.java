@@ -11,8 +11,8 @@ public final class CheckTest {
 
     @Test
     public void testTypeChecks() {
-        assertTrue(CheckType.isPrimitive(Integer.class));
-        assertTrue(CheckType.isPrimitive(int.class));
-        assertFalse(CheckType.isPrimitive(UfoFile.class));
+        assertFalse(CheckType.isNotPrimitive(Integer.class));
+        assertFalse(CheckType.isNotPrimitive(int.class));
+        assertTrue(CheckType.isNotPrimitive(UfoFile.class));
     }
 }
