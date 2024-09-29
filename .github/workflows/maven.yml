@@ -39,8 +39,8 @@ jobs:
         run: mvn test --quiet -Dmaven.test.failure.ignore=false --file pom.xml
 
       # Publish the JAR to GitHub Packages if on the main branch and tests pass
-      - name: Publish JAR
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
-        run: |
-          mvn deploy --quiet -DskipTests --file pom.xml \
-          -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/${{ github.repository }}
+      #- name: Publish JAR
+      #  if: github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
+      #  run: |
+      #    mvn deploy --quiet -DskipTests --file pom.xml \
+      #    -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/${{ github.repository }}
