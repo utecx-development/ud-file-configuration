@@ -6,7 +6,7 @@
 
     <groupId>dev.ufo</groupId>
     <artifactId>ufodata</artifactId>
-    <version>0.3.1</version>
+    <version>0.3.1-SNAPSHOT</version>  <!-- SNAPSHOT allows maven to republish same version -->
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
