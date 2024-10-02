@@ -1,12 +1,12 @@
 package dev.ufo.ufodata.core.io;
 
-import dev.ufo.ufodata.lib.checks.CheckType;
 import dev.ufo.ufodata.core.QueuedAsyncExecution;
 import dev.ufo.ufodata.core.format.JsonFormatter;
 import dev.ufo.ufodata.core.format.ListFormatter;
 import dev.ufo.ufodata.core.format.MapFormatter;
 import dev.ufo.ufodata.core.format.ObjectFormatter;
 import dev.ufo.ufodata.lib.TypeValue;
+import dev.ufo.ufodata.lib.checks.CheckType;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -172,6 +172,14 @@ public final class UfoFile {
     }
 
     /**
+     * Clear the file and its cache.
+     */
+    public void clear() {
+        this.cache.clear();
+        save(true);
+    }
+
+    /**
      * Feature: Convert this UfoFile to JSON to work with it
      * @return This file formatted to be a JSON
      */
@@ -200,4 +208,5 @@ public final class UfoFile {
         this.cache.putAll(JsonFormatter.fromJson(json)); //add in all the contents of this JSON
         this.changed = true;
     }
+
 }
