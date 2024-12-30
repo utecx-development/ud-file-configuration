@@ -14,8 +14,6 @@ Developed to provide a simple solution for Java developers to handle their confi
 
 ## Usage
 
-> **Important:** Every complex object, such as user data that you want to save to your file, must extend the `UDObject` class, or it won't be formatted correctly.
-
 
 > 1 - your path | 2 - your file name | 3 - enable or disable auto shutdown save
 
