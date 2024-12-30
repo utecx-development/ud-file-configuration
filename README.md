@@ -10,6 +10,7 @@ Developed to provide a simple solution for Java developers to handle their confi
 - 🛠️ **JSON Support** - UfoData includes complex JSON support, allowing you to convert between UfoData and JSON formats seamlessly.
 
 ## Implementation
+(repo is closed!)
 
 ### Maven
 
