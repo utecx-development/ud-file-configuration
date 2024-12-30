@@ -3,98 +3,39 @@
 Developed to provide a simple solution for Java developers to handle their configuration and data using flat files, UfoData strives to provide exactly that. Here’s why you should consider using UfoData:
 
 - ⚡ **Fast** - Thanks to its in-built cache, it's even faster than GSON!
-- 🍎 **Simple** - Just create a config for your files and start working with them.
+- 🍎 **Simple** - By looking at the examples down below you will notice UD is very beginner friendly, readable and simple to use.
 - 🌈 **Unique** - Featuring a new, easy-to-understand format, UfoData’s format is really nice to write and read.
 - 🔄 **Updated and Well-Maintained** - Enjoy new features regularly. 😃
 - ❗ **Responsible** - Found a bug or missing a feature? Let us know on our [Discord](https://discord.gg/gzxrub5ABQ).
-- 🛠️ **JSON Support** - UfoData includes complex JSON support, allowing you to convert between UfoData and JSON formats seamlessly.
+- 🛠️ **JSON Support** - UfoData includes complex JSON support, allowing you to convert between UfoData and JSON formats seamlessly. (not supported in the newest version! will be added back soon!)
 
 ## Implementation
-(repo is closed!)
-
-### Maven
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>dev.ufo</groupId>
-        <artifactId>ufodata</artifactId>
-        <version>0.3.1</version>
-        <scope>compile</scope>
-    </dependency>
-</dependencies>
-
-<repositories>
-    <repository>
-        <id>repo</id>
-        <url>https://www.ufomc.de/repo/</url>
-    </repository>
-</repositories>
-```
-
-### Gradle (Groovy DSL)
-
-```groovy
-repositories {
-    maven {
-        url "https://www.ufomc.de/repo/"
-    }
-}
-
-dependencies {
-    implementation 'dev.ufo:ufodata:0.3.1'
-}
-```
-
-### Gradle (Kotlin DSL)
-
-```kotlin
-repositories {
-    maven("https://www.ufomc.de/repo/")
-}
-
-dependencies {
-    implementation("dev.ufo", "ufodata", "0.3.1")
-}
-```
+(repo is closed unfortunatly!)
 
 ## Usage
 
 > **Important:** Every complex object, such as user data that you want to save to your file, must extend the `UDObject` class, or it won't be formatted correctly.
 
 ```java
-// Initialize your UfoFile with one of these implementations:
+<1 - your path | 2 - your file name | 3 - enable or disable auto shutdown save>
+UD ud = UD.init("C:\\YOUR\\PATH\\", "test", true);
 
-// Using a class to determine the path and filename
-UfoFile ufoFile = UfoFile.of(YourMainClass.class, "fileName");
+<1> this can be everything including premitives, java objects such as user profiles, lists and maps
+ud.set("key", <1>);
 
-// Your path and name
-UfoFile ufoFile = UfoFile.of("your/path", "filename");
+<here you you see a demenstration of the usage>
+System.out.println(ud.get(<1>.class, "key"));
 
-// Or a file
-UfoFile ufoFile = UfoFile.of(new File("your file"));
-
-// Examples for putting objects into the cache
-ufoFile.put("myObject", new Value("hello", "world"));
-ufoFile.put("myList", List.of(1, 2, 3));
-ufoFile.put("myMap", Map.of("1. int", 1, "2. int", 2));
-
-// Save the cache
-ufoFile.save(true);
-
-// Retrieve the UfoData from the config
-Value value = ufoFile.get(Value.class, "myObject");
-List<Integer> list = ufoFile.getList(Integer.class, "myList");
-Map<String, Integer> map = ufoFile.getMap(String.class, Integer.class, "myMap");
+<the boolean is used to force the save even tho nothing was changed (according to the file system). please use true if you work with immutables like maps or lists here!>
+ud.save(true);
 ```
 
 ## JSON Conversion
 
-> **Note:** This feature is still in beta! Please report any bugs to our staff.
+> **Note:** This feature is not supported in the newest version! it will be added back soon!
 
 ```java
-String json = ufoFile.toJson();
-ufoFile.fromJson("{\"your\": \"json string\"}");
+added back soon!
 ```
 
 ## Data Format Example
@@ -102,21 +43,7 @@ ufoFile.fromJson("{\"your\": \"json string\"}");
 Here's how the data looks when formatted:
 
 ```
-string:hello=world;
-list<string>:list=[hello, world, ...];
-map<string,string>:map={hello-Iamamap};
-object:object={string:name=Tom,int:age=13};
+
 ```
-
-## Why Use UfoData?
-
-- **Performance:** Lightning-fast operations with in-built caching.
-- **Simplicity:** Easy configuration and usage.
-- **Readability:** Clean and understandable data format.
-- **Maintenance:** Regular updates and active community support.
-- **Responsiveness:** Quick bug fixes and feature implementations based on user feedback.
-- **Versatility:** Seamless JSON integration.
-
----
 
 For more information and support, join our [Discord community](https://discord.gg/gzxrub5ABQ).
