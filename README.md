@@ -23,7 +23,7 @@ Developed to provide a simple solution for Java developers to handle their confi
 UD ud = UD.init("C:\\YOUR\\PATH\\", "test", true);
 ```
 
-<1> this can be everything including premitives, java objects such as user profiles, lists and maps
+> <1> this can be everything including premitives, java objects such as user profiles, lists and maps
 
 ```java
 ud.set("key", <1>);
