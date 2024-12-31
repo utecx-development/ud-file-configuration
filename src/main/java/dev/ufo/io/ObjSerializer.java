@@ -1,189 +1,175 @@
 package dev.ufo.io;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ObjSerializer {
 
-    public static <V> V convert(Class<V> clazz, String s) {
+    public static <V> V convert(Class<V> clazz, String json) {
         try {
-            if (s.startsWith("{") && s.endsWith("}")) {
-                s = s.substring(1, s.length() - 1);
-            }
-
-            V instance = clazz.getDeclaredConstructor().newInstance();
-            Field[] fields = clazz.getDeclaredFields();
-
-            Map<String, List<String>> keyValuePairs = parseKeyValuePairs(s);
-
-            for (Field field : fields) {
-                String fieldName = field.getName();
-                field.setAccessible(true);
-
-                if (keyValuePairs.containsKey(fieldName)) {
-                    String value = keyValuePairs.get(fieldName).get(0);
-                    Object parsedValue = parseValue(field.getType(), value, field);
-                    field.set(instance, parsedValue);
-                } else {
-                    field.set(instance, getDefaultValue(field.getType()));
-                }
-            }
-
-            return instance;
+            json = json.trim();
+            return parseObject(clazz, json);
         } catch (Exception e) {
-            throw new RuntimeException("An error occurred while serializing '" + s + "'", e);
+            throw new RuntimeException(e);
         }
     }
 
-    private static Map<String, List<String>> parseKeyValuePairs(String s) {
-        Map<String, List<String>> map = new LinkedHashMap<>();
-        int braceLevel = 0;
-        int mapLevel = 0;
-        int listLevel = 0;
-        StringBuilder keyBuilder = new StringBuilder();
-        StringBuilder valueBuilder = new StringBuilder();
-        boolean readingKey = true;
+    private static <V> V parseObject(Class<V> clazz, String json) throws Exception {
+        V instance = clazz.getDeclaredConstructor().newInstance();
+        Map<String, String> keyValues = extractKeyValuePairs(json);
 
-        for (int i = 0; i < s.length(); i++) {
-            char c = s.charAt(i);
+        for (Field field : clazz.getDeclaredFields()) {
+            field.setAccessible(true);
+            String fieldName = field.getName();
 
-            if (readingKey) {
-                if (c == '=') {
-                    readingKey = false;
+            if (keyValues.containsKey(fieldName)) {
+                String value = keyValues.get(fieldName);
+                if (isPrimitive(field.getType())) {
+                    field.set(instance, parsePrimitive(field.getType(), value));
+                } else if (field.getType().isAssignableFrom(List.class)) {
+                    field.set(instance, parseList(value));
+                } else if (field.getType().isAssignableFrom(Map.class)) {
+                    field.set(instance, parseMap(value));
                 } else {
-                    keyBuilder.append(c);
-                }
-            } else {
-                if (c == '{') braceLevel++;
-                if (c == '}') braceLevel--;
-                if (c == '<') mapLevel++;
-                if (c == '>') mapLevel--;
-                if (c == '[') listLevel++;
-                if (c == ']') listLevel--;
-
-                if (c == ',' && braceLevel == 0 && mapLevel == 0 && listLevel == 0) {
-                    String key = keyBuilder.toString().trim();
-                    String value = valueBuilder.toString().trim();
-                    map.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
-                    keyBuilder.setLength(0);
-                    valueBuilder.setLength(0);
-                    readingKey = true;
-                } else {
-                    valueBuilder.append(c);
+                    field.set(instance, parseObject(field.getType(), value));
                 }
             }
         }
 
-        if (!keyBuilder.isEmpty() && !valueBuilder.isEmpty()) {
-            String key = keyBuilder.toString().trim();
-            String value = valueBuilder.toString().trim();
-            map.computeIfAbsent(key, k -> new ArrayList<>()).add(value);
+        return instance;
+    }
+
+    private static Map<String, String> extractKeyValuePairs(String json) {
+        Map<String, String> keyValues = new HashMap<>();
+        json = json.substring(1, json.length() - 1).trim();
+
+        String currentKey = null;
+        boolean inQuotes = false;
+        boolean isKey = true;
+        int braceCount = 0;
+        StringBuilder buffer = new StringBuilder();
+
+        for (int i = 0; i < json.length(); i++) {
+            char c = json.charAt(i);
+
+            if (c == '"') {
+                inQuotes = !inQuotes;
+            } else if (!inQuotes) {
+                if (c == '{' || c == '[') {
+                    braceCount++;
+                } else if (c == '}' || c == ']') {
+                    braceCount--;
+                } else if (c == ':' && isKey && braceCount == 0) {
+                    currentKey = buffer.toString().trim().replaceAll("^\"|\"$", "");
+                    buffer.setLength(0);
+                    isKey = false;
+                    continue;
+                } else if (c == ',' && braceCount == 0) {
+                    keyValues.put(currentKey, buffer.toString().trim());
+                    buffer.setLength(0);
+                    isKey = true;
+                    continue;
+                }
+            }
+
+            buffer.append(c);
+        }
+
+        if (currentKey != null && !buffer.isEmpty()) {
+            keyValues.put(currentKey, buffer.toString().trim());
+        }
+
+        return keyValues;
+    }
+
+    private static Object parsePrimitive(Class<?> type, String value) {
+        if (type == int.class || type == Integer.class) {
+            return Integer.parseInt(value);
+        } else if (type == long.class || type == Long.class) {
+            return Long.parseLong(value);
+        } else if (type == double.class || type == Double.class) {
+            return Double.parseDouble(value);
+        } else if (type == boolean.class || type == Boolean.class) {
+            return Boolean.parseBoolean(value);
+        } else if (type == String.class) {
+            return value.replaceAll("^\"|\"$", "");
+        }
+        throw new IllegalArgumentException("Unsupported primitive type: " + type);
+    }
+
+    private static List<Object> parseList(String json) throws Exception {
+
+        json = json.substring(1, json.length() - 1).trim();
+        List<Object> list = new ArrayList<>();
+        int braceCount = 0;
+        boolean inQuotes = false;
+        StringBuilder buffer = new StringBuilder();
+
+        for (int i = 0; i < json.length(); i++) {
+            char c = json.charAt(i);
+
+            if (c == '"') {
+                inQuotes = !inQuotes;
+            } else if (!inQuotes) {
+                if (c == '{' || c == '[') {
+                    braceCount++;
+                } else if (c == '}' || c == ']') {
+                    braceCount--;
+                } else if (c == ',' && braceCount == 0) {
+                    list.add(parseValue(buffer.toString().trim()));
+                    buffer.setLength(0);
+                    continue;
+                }
+            }
+
+            buffer.append(c);
+        }
+
+        if (!buffer.isEmpty()) {
+            list.add(parseValue(buffer.toString().trim()));
+        }
+
+        return list;
+    }
+
+    private static Map<String, Object> parseMap(String json) throws Exception {
+        Map<String, String> keyValues = extractKeyValuePairs(json);
+        Map<String, Object> map = new HashMap<>();
+
+        for (Map.Entry<String, String> entry : keyValues.entrySet()) {
+            map.put(entry.getKey(), parseValue(entry.getValue()));
         }
 
         return map;
     }
 
-    private static Object parseValue(Class<?> type, String value, Field field) {
-        try {
-            if (value.startsWith("\"") && value.endsWith("\"")) {
-                return value.substring(1, value.length() - 1);
-            }
-
-            if (type == String.class) {
-                return value;
-            } else if (type == int.class || type == Integer.class) {
-                return Integer.parseInt(value);
-            } else if (List.class.isAssignableFrom(type)) {
-
-                //LIST
-
-                if (value.startsWith("[") && value.endsWith("]")) {
-                    String inner = value.substring(1, value.length() - 1);
-                    String[] elements = splitElements(inner);
-                    Type genericType = ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
-                    Class<?> listClass = Class.forName(genericType.getTypeName());
-                    List<Object> list = new ArrayList<>();
-                    for (String element : elements) {
-                        list.add(parseValue(listClass, element.trim(), null));
-                    }
-                    return list;
+    private static Object parseValue(String value) throws Exception {
+        value = value.trim();
+        if (value.startsWith("{")) {
+            return parseMap(value);
+        } else if (value.startsWith("[")) {
+            return parseList(value);
+        } else if (value.startsWith("\"")) {
+            return value.replaceAll("^\"|\"$", "");
+        } else {
+            try {
+                if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
+                    return Boolean.parseBoolean(value);
+                } else if (value.contains(".")) {
+                    return Double.parseDouble(value);
+                } else {
+                    return Integer.parseInt(value);
                 }
-            } else if (Map.class.isAssignableFrom(type)) {
-
-                //MAP
-
-                if (value.startsWith("<") && value.endsWith(">")) {
-                    String inner = value.substring(1, value.length() - 1);
-                    String[] elements = splitElements(inner);
-                    Map<Object, Object> map = new HashMap<>();
-                    Type[] genericTypes = ((ParameterizedType) field.getGenericType()).getActualTypeArguments();
-                    Class<?> keyClass = Class.forName(genericTypes[0].getTypeName());
-                    Class<?> valueClass = Class.forName(genericTypes[1].getTypeName());
-                    for (String element : elements) {
-                        String[] keyValue = element.split("-", 2);
-                        Object key = parseValue(keyClass, keyValue[0].trim(), null);
-                        Object mapValue = parseValue(valueClass, keyValue[1].trim(), null);
-                        map.put(key, mapValue);
-                    }
-                    return map;
-                }
-            } else if (value.startsWith("{") && value.endsWith("}")) {
-                return convert(type, value);
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return null;
-    }
-
-    private static String[] splitElements(String s) {
-        List<String> elements = new ArrayList<>();
-        int braceLevel = 0, mapLevel = 0, listLevel = 0;
-        StringBuilder current = new StringBuilder();
-
-        for (char c : s.toCharArray()) {
-            if (c == '{') braceLevel++;
-            if (c == '}') braceLevel--;
-            if (c == '<') mapLevel++;
-            if (c == '>') mapLevel--;
-            if (c == '[') listLevel++;
-            if (c == ']') listLevel--;
-
-            if (c == ',' && braceLevel == 0 && mapLevel == 0 && listLevel == 0) {
-                elements.add(current.toString());
-                current.setLength(0);
-            } else {
-                current.append(c);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Unsupported primitive type for value: " + value, e);
             }
         }
-
-        if (!current.isEmpty()) {
-            elements.add(current.toString());
-        }
-
-        return elements.toArray(new String[0]);
     }
 
-    private static Object getDefaultValue(Class<?> type) {
-        if (type.isPrimitive()) {
-            if (type == boolean.class) return false;
-            if (type == char.class) return '\0';
-            if (type == byte.class) return (byte) 0;
-            if (type == short.class) return (short) 0;
-            if (type == int.class) return 0;
-            if (type == long.class) return 0L;
-            if (type == float.class) return 0.0f;
-            if (type == double.class) return 0.0;
-        } else if (Map.class.isAssignableFrom(type)) {
-            return new HashMap<>();
-        } else if (List.class.isAssignableFrom(type)) {
-            return new ArrayList<>();
-        }
-        return null;
+    private static boolean isPrimitive(Class<?> type) {
+        return type.isPrimitive() || type == String.class || Number.class.isAssignableFrom(type) || type == Boolean.class;
     }
-
 }

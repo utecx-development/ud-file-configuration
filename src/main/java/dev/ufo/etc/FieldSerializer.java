@@ -4,8 +4,12 @@ public class FieldSerializer {
 
     public static Object serialize(String s) {
 
+        if (s.startsWith("{") || s.startsWith("[")) {
+            return s;
+        }
+
         if (s.startsWith("\"")) {
-            return s.substring(1, s.length() - 1);
+            return s;
         }
 
         try {

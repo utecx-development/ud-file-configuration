@@ -31,4 +31,17 @@ public class TypeCheck {
                 type == Byte.class ||
                 type == Short.class;
     }
+
+    public static boolean isPrimitiveExcludedString(final Class<?> type) {
+        return type.isPrimitive() ||
+                type == Integer.class ||
+                type == Boolean.class ||
+                type == Double.class ||
+                type == Float.class ||
+                type == Long.class ||
+                type == Character.class ||
+                type == Byte.class ||
+                type == Short.class;
+    }
+
 }
