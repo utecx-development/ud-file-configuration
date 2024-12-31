@@ -7,7 +7,7 @@ Developed to provide a simple solution for Java developers to handle their confi
 - 🌈 **Unique** - Featuring a new, easy-to-understand format, UfoData’s format is really nice to write and read.
 - 🔄 **Updated and Well-Maintained** - Enjoy new features regularly. 😃
 - ❗ **Responsible** - Found a bug or missing a feature? Let us know on our [Discord](https://discord.gg/gzxrub5ABQ).
-- 🛠️ **JSON Support** - UfoData includes complex JSON support, allowing you to convert between UfoData and JSON formats seamlessly. (not supported in the newest version! will be added back soon!)
+- 🛠️ **JSON Support** - UfoData includes complex JSON support, allowing you to convert between UfoData and JSON formats seamlessly.
 
 ## Implementation
 (repo is closed unfortunatly!)
