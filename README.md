@@ -36,3 +36,7 @@ ud.save(true);
 ```
 
 For more information and support, join our [Discord community](https://discord.gg/gzxrub5ABQ).
+
+##Important: 
+> This software is free to use and modify for everyone. Please dont sell it tho! If you would like to give me/the repo a credit I would be very happy but it´s no must have!
+Also have a nice day 👋
