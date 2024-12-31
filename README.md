@@ -16,7 +16,7 @@ Developed to provide a simple solution for Java developers to handle their confi
 > 1 - your path | 2 - your file name | 3 - enable or disable auto shutdown save
 
 ```java
-UD ud = UD.init("C:\\YOUR\\PATH\\", "test", true);
+UD ud = UD.init("C:\\YOUR\\PATH\\", "your-file-name", true);
 ```
 
 > <1> this can be everything including premitives, java objects such as user profiles, lists and maps
