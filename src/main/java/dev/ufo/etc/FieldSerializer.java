@@ -2,24 +2,26 @@ package dev.ufo.etc;
 
 public class FieldSerializer {
 
-    public static Object serialize(String s) {
+    /**
+     * Gets a data type from a string
+     * @param string the string input
+     * @return The data found
+     */
+    public static Object serialize(String string) {
 
-        if (s.startsWith("{") || s.startsWith("[")) {
-            return s;
+        if (string.startsWith("{") || string.startsWith("[") || string.startsWith("\"")) {
+            return string;
         }
 
-        if (s.startsWith("\"")) {
-            return s;
-        }
 
         try {
-            return Integer.parseInt(s);
+            return Integer.parseInt(string);
         } catch (Exception a) {
             try {
-                return Long.parseLong(s);
+                return Long.parseLong(string);
             } catch (Exception b) {
                 try {
-                    return Double.parseDouble(s);
+                    return Double.parseDouble(string);
                 } catch (Exception ignored) {
 
                 }
@@ -27,9 +29,9 @@ public class FieldSerializer {
         }
 
         try {
-            return Boolean.parseBoolean(s);
+            return Boolean.parseBoolean(string);
         } catch (Exception e) {
-            throw new RuntimeException("could not find a type for '" + s + "'", e);
+            throw new RuntimeException("could not find a type for '" + string + "'", e);
         }
 
     }

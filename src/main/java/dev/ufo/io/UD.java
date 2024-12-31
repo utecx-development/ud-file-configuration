@@ -29,21 +29,45 @@ public class UD {
         }
     }
 
-    public static UD init(File f, String fileName, boolean addShutdownHook) {
-        return new UD(new File(f.getPath() + fileName + fileEnding), addShutdownHook);
+    /**
+     * Gives you an initialized UD config
+     * @param file The file that will be used. Make sure the path is accessible.
+     * @param fileName The name of your file
+     * @param addShutdownHook Do you want to add a shutdown hook for auto save after the shutdown? -> true
+     */
+
+    public static UD init(File file, String fileName, boolean addShutdownHook) {
+        return new UD(new File(file.getPath() + fileName + fileEnding), addShutdownHook);
     }
+
+    /**
+     * Used to parse items from a json string to a list
+     * @param path The path to your file. Make sure the path is accessible.
+     */
 
     public static UD init(String path, String fileName, boolean addShutdownHook) {
         return new UD(new File(path + File.separator + fileName + fileEnding), addShutdownHook);
     }
 
+    /**
+     * Used to parse items from a json string to a list
+     * @param key Your key for the json config.
+     * @param value Your value for the json config.
+     */
     public void set(String key, Object value) {
         cache.put(key, value);
 
         changed = true;
     }
 
-    public <V> V get(Class<V> clazz, String key) {
+    /**
+     * Used to get items from your json config
+     * @param key Your key for the json config.
+     * @param clazz The type you are expecting to get from that particular key.
+     * @param <V> The generic used for clazz.
+     * @return you will receive an object with an instance of V if the request is successful
+     */
+    public <V> V get(String key, Class<V> clazz) {
 
         cache.forEach((k, value) -> {
             System.out.println(k + " " + value);
@@ -71,6 +95,13 @@ public class UD {
 
     }
 
+    /**
+     * Used to get lists from your json config
+     * @param key Your key for the json config.
+     * @param tClazz The type you are expecting the list to have.
+     * @param <T> The generic used for tClazz.
+     * @return the list
+     */
     public <T> List<T> getList(Class<T> tClazz, String key) {
 
         if (cache.containsKey(key) && cache.get(key) instanceof String s) {
@@ -82,6 +113,14 @@ public class UD {
         throw new RuntimeException("List with the key '" + key + "' could not be parsed");
     }
 
+    /**
+     * Used to get maps from your json config
+     * @param key Your key for the json config.
+     * @param vClazz The type you are expecting the map to have.
+     * @param <V> The generic used for tClazz.
+     * @return the map
+     */
+
     public <V> Map<String, V> getMap(Class<V> vClazz, String key) {
         if (cache.containsKey(key) && cache.get(key) instanceof String s) {
             Map<String, V> result = new HashMap<>();
@@ -92,10 +131,16 @@ public class UD {
         throw new RuntimeException("Map with the key '" + key + "' could not be parsed");
     }
 
+    /**
+     * Used to get save your json config
+     * @param force force the save even if there were no changes according to UD
+     *              (please enable if you work with immutables like maps or lists...)
+     */
+
     public void save(boolean force) {
         if (!force && !changed) return;
 
-        try (final PrintWriter writer = new PrintWriter(new FileWriter(this.file))) { //Todo: Test if this overwrites current file contents (it should!)
+        try (final PrintWriter writer = new PrintWriter(new FileWriter(this.file))) {
 
             writer.write(toString());
             writer.flush();
@@ -108,6 +153,11 @@ public class UD {
 
         changed = false;
     }
+
+    /**
+     * This methode will convert the cache to a json string.
+     * @return the json string
+     */
 
     @Override
     public String toString() {

@@ -5,6 +5,13 @@ import java.util.Map;
 
 public class ListingAdapter {
 
+    /**
+     * Used to parse items from a json string to a list
+     * @param json the json string input
+     * @param tClazz the list type
+     * @param result the list, the items are being transferred to
+     * @param <T> that´s the generic for the list type
+     */
     static <T> void parseJsonToList(String json, Class<T> tClazz, List<T> result) {
         json = json.trim();
         if (json.startsWith("[") && json.endsWith("]")) {
@@ -17,8 +24,14 @@ public class ListingAdapter {
         }
     }
 
+    /**
+     * Used to parse items from a json string to a list
+     * @param json the json string input
+     * @param vClazz the map type
+     * @param result the map, the items are being transferred to
+     * @param <V> that´s the generic for the map type
+     */
     static <V> void parseJsonToMap(String json, Class<V> vClazz, Map<String, V> result) {
-        // JSON parsing logic for map (basic implementation without libraries)
         json = json.trim();
         if (json.startsWith("{") && json.endsWith("}")) {
             String[] entries = json.substring(1, json.length() - 1).split(",");
@@ -37,8 +50,14 @@ public class ListingAdapter {
         }
     }
 
+    /**
+     * Used to parse items from a json string to a list
+     * @param value the json string input
+     * @param tClazz the type
+     * @param <T> that´s the generic for the type
+     * @return the result after casting
+     */
     static <T> T convertStringToType(String value, Class<T> tClazz) {
-        // Convert string to the desired type (basic implementation)
         if (tClazz == String.class) {
             return tClazz.cast(value.replaceAll("^\"|\"$", ""));
         } else if (tClazz == Integer.class) {
@@ -51,5 +70,4 @@ public class ListingAdapter {
             throw new IllegalArgumentException("Unsupported type: " + tClazz);
         }
     }
-
 }

@@ -7,6 +7,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class JsonConverter {
 
+    /**
+     * Returns a Json string from an object
+     * @param o the given object
+     * @return the json string
+     */
     public static String toJson(Object o) {
 
         try {
@@ -60,8 +65,7 @@ public class JsonConverter {
                     return b.toString();
 
                 } else {
-                    //TODO
-                    throw new RuntimeException("");
+                    throw new RuntimeException("The object '" + o.toString() + "' could not be parsed!");
                 }
 
             } else {
@@ -97,6 +101,12 @@ public class JsonConverter {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * This one is used to transform a simple primitive object to json
+     * @param o the object input
+     * @return The json element
+     */
 
     private static String toJsonElement(Object o) {
 
