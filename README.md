@@ -28,7 +28,7 @@ ud.set("key", <1>);
 > here you you see a demenstration of the usage
   
 ```java
-ud.get(<1>.class, "key");
+ud.get("key", <1>.class);
 ```
 > the boolean is used to force the save even tho nothing was changed (according to the file system). please use true if you work with immutables like maps or lists here!
 ```java
