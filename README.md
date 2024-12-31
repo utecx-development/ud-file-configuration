@@ -44,3 +44,5 @@ Also have a nice day 👋
 
 For more information and support, join our [Discord community](https://discord.gg/gzxrub5ABQ).
 
+![Views Counter](https://views-counter.vercel.app/badge?pageId=ud-file-configuration%2FViews-Counter&leftColor=400000&rightColor=ff8080&type=unique&sessionExpire=60&label=Visitors&style=upper)
+
