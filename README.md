@@ -2,6 +2,7 @@
 
 Developed to provide a simple solution for Java developers to handle their configuration and data using flat files (json based), UfoData strives to provide exactly that. Here’s why you should consider using UfoData:
 
+- 📑 **Notes** - You can comment the files with a '#' infront of your line. This is usualy not the case in json.
 - ⚡ **Fast** - Thanks to its in-built cache, it's even faster than GSON!
 - 🍎 **Simple** - By looking at the examples down below you will notice UD is very beginner friendly, readable and simple to use.
 - 🌈 **Unique** - Featuring a new, easy-to-understand format, UfoData’s format is really nice to write and read.
