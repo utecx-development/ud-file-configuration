@@ -41,5 +41,5 @@ ud.save(true);
 Also have a nice day 👋
 
 
-    For more information and support, join our [Discord community](https://discord.gg/gzxrub5ABQ).
+For more information and support, join our [Discord community](https://discord.gg/gzxrub5ABQ).
 
