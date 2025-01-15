@@ -16,7 +16,7 @@ Developed to provide a simple solution for Java developers to handle their confi
 
 > 1 - your path | 2 - your file name | 3 - enable or disable auto shutdown save
 
-**NOTE:** You can NOT save your UD regulary when using the init from string! Use the saveToFile(FILE) instead!
+**NOTE:** You can NOT save your UD regulary when using the init from string! Use the `saveToFile(FILE)` instead!
 
 ```java
 UD ud = UD.init("C:\\YOUR\\PATH\\", "your-file-name", true);
