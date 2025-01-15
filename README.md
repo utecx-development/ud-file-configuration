@@ -15,7 +15,7 @@ Developed to provide a simple solution for Java developers to handle their confi
 ## Usage
 
 > 1 - your path | 2 - your file name | 3 - enable or disable auto shutdown save
-> or if you init your UD using a json string 1 - string
+
 **NOTE:** You can NOT save your UD regulary when using the init from string! Use the saveToFile(FILE) instead!
 
 ```java
