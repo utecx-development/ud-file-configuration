@@ -11,11 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiConsumer;
 
 public class UD {
 
-    private final File file;
+    private final boolean isFile;
+    private File file;
     private static final String fileEnding = ".ud";
     private final Map<String, Object> cache = new HashMap<>();
     private final Map<Integer, String> comments = new HashMap<>();
@@ -24,10 +24,16 @@ public class UD {
 
     UD(File file, boolean addShutdownHook) {
         this.file = file;
+        this.isFile = true;
         UDReader.readData(file, cache, comments);
         if (addShutdownHook) {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> save(false)));
         }
+    }
+
+    UD(String s) {
+        this.isFile = false;
+        UDReader.extractData(s, cache);
     }
 
     /**
@@ -48,6 +54,10 @@ public class UD {
 
     public static UD init(String path, String fileName, boolean addShutdownHook) {
         return new UD(new File(path + File.separator + fileName + fileEnding), addShutdownHook);
+    }
+
+    public static UD init(String json) {
+        return new UD(json);
     }
 
     /**
@@ -75,9 +85,7 @@ public class UD {
      */
     public <V> V get(String key, Class<V> clazz) {
 
-        cache.forEach((k, value) -> {
-            System.out.println(k + " " + value);
-        });
+        cache.forEach((k, value) -> System.out.println(k + ": " + value));
 
         if (!cache.containsKey(key)) {
             throw new RuntimeException("The cache does not contain '" + key + "'");
@@ -152,11 +160,11 @@ public class UD {
      */
 
     public void save(boolean force) {
-        if (!force && !changed) return;
+        if (!force && !changed && isFile) return;
 
         try (final PrintWriter writer = new PrintWriter(new FileWriter(this.file))) {
 
-            writer.write(toString());
+            writer.write(toString(true));
             writer.flush();
 
             this.changed = false;
@@ -166,15 +174,35 @@ public class UD {
         }
 
         changed = false;
+
+    }
+
+    public void saveToFile(File file) {
+        if (isFile) return;
+
+        try (final PrintWriter writer = new PrintWriter(new FileWriter(file))) {
+
+            writer.write(toString(false));
+            writer.flush();
+
+            this.changed = false;
+
+        } catch (final Exception exception) {
+            throw new RuntimeException("An error occurred while trying to save contents to: '" + file.getName() + "'!", exception);
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        return toString(false);
     }
 
     /**
      * This methode will convert the cache to a json string.
      * @return the json string
      */
-
-    @Override
-    public String toString() {
+    public String toString(boolean comment) {
 
         StringBuilder b = new StringBuilder();
         AtomicInteger i = new AtomicInteger();
@@ -182,12 +210,10 @@ public class UD {
         b.append("{\n");
 
         cache.forEach((key, value) -> {
-
             i.getAndIncrement();
-
             int j = i.get();
 
-            if (comments.containsKey(j + 1)) {
+            if (comment && comments.containsKey(j + 1)) {
                 b.append(comments.get(j + 1))
                         .append("\n");
             }
@@ -199,15 +225,10 @@ public class UD {
             if (i.get() != cache.size()) {
                 b.append(",");
             }
-
             b.append("\n");
-
         });
-
         b.append("}");
-
         return b.toString();
-
     }
 
     public String getString(String key) {

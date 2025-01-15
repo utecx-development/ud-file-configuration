@@ -33,53 +33,7 @@ class UDReader {
                 lines.append(line);
             }
 
-            int level = 0;
-            boolean readingKey = true;
-
-            StringBuilder keyBuilder = new StringBuilder();
-            StringBuilder valueBuilder = new StringBuilder();
-
-            for (char c : lines.toString().replace("\n", "").substring(1, lines.toString().length() - 1).toCharArray()) {
-                switch (c) {
-                    case '[', '{' -> {
-                        if (!readingKey) {
-                            valueBuilder.append(c);
-                        }
-                        level++;
-                        continue;
-                    }
-                    case ']', '}' -> {
-                        if (!readingKey) {
-                            valueBuilder.append(c);
-                        }
-                        level--;
-                        if (level == 0) {
-                            cache.put(keyBuilder.toString().replace("\"", ""), FieldSerializer.serialize(valueBuilder.toString()));
-                            readingKey = true;
-                            keyBuilder.setLength(0);
-                            valueBuilder.setLength(0);
-                        }
-                        continue;
-                    }
-                    case ':' -> {
-                        if (readingKey) {
-                            readingKey = false;
-                            continue;
-                        }
-                    }
-                    case ',' -> {
-                        if (level == 0) {
-                            continue;
-                        }
-                    }
-                }
-
-                if (readingKey) {
-                    keyBuilder.append(c);
-                } else {
-                    valueBuilder.append(c);
-                }
-            }
+            extractData(lines.toString(), cache);
 
         } catch (Exception e){
             throw new RuntimeException(e);
@@ -95,6 +49,76 @@ class UDReader {
             throw new RuntimeException(e);
         }
 
+    }
+
+    static void extractData(String lines, Map<String, Object> cache) {
+
+        int level = 0;
+        boolean readingKey = true;
+        StringBuilder keyBuilder = new StringBuilder();
+        StringBuilder valueBuilder = new StringBuilder();
+
+        // Entferne äußere { und }, falls vorhanden
+        lines = lines.trim();
+        if (lines.startsWith("{") && lines.endsWith("}")) {
+            lines = lines.substring(1, lines.length() - 1);
+        }
+
+        for (char c : lines.toCharArray()) {
+            switch (c) {
+                case '{', '[' -> {
+                    level++;
+                    valueBuilder.append(c);
+                }
+                case '}', ']' -> {
+                    level--;
+                    valueBuilder.append(c);
+                    if (level == 0 && !readingKey) {
+                        cache.put(keyBuilder.toString().replace("\"", "").trim(),
+                                FieldSerializer.serialize(valueBuilder.toString().trim()));
+                        keyBuilder.setLength(0);
+                        valueBuilder.setLength(0);
+                        readingKey = true;
+                    }
+                }
+                case ':' -> {
+                    if (readingKey) {
+                        readingKey = false;
+                    } else {
+                        valueBuilder.append(c);
+                    }
+                }
+                case ',' -> {
+                    if (level == 0) {
+                        // Abschluss eines Schlüssel-Wert-Paars
+                        cache.put(trim(keyBuilder),
+                                FieldSerializer.serialize(valueBuilder.toString().trim()));
+                        keyBuilder.setLength(0);
+                        valueBuilder.setLength(0);
+                        readingKey = true;
+                    } else {
+                        valueBuilder.append(c);
+                    }
+                }
+                default -> {
+                    if (readingKey) {
+                        keyBuilder.append(c);
+                    } else {
+                        valueBuilder.append(c);
+                    }
+                }
+            }
+        }
+
+        // Letztes Paar hinzufügen, falls vorhanden
+        if (!keyBuilder.isEmpty() && !valueBuilder.isEmpty()) {
+            cache.put(trim(keyBuilder),
+                    FieldSerializer.serialize(valueBuilder.toString().trim()));
+        }
+    }
+
+    private static String trim(StringBuilder b) {
+        return b.toString().replace("\"", "").trim();
     }
 
 }

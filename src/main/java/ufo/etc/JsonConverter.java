@@ -65,7 +65,7 @@ public class JsonConverter {
                     return b.toString();
 
                 } else {
-                    throw new RuntimeException("The object '" + o.toString() + "' could not be parsed!");
+                    throw new RuntimeException("The object '" + o + "' could not be parsed!");
                 }
 
             } else {
