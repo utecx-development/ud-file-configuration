@@ -24,7 +24,7 @@ UD ud = UD.init("C:\\YOUR\\PATH\\", "your-file-name", true);
 UD ud = UD.init("{your json string here}");
 ```
 
-> **<1>** this can be everything including premitives, java objects such as user profiles, lists and maps
+> this can be everything including premitives, java objects such as user profiles, lists and maps
 
 ```java
 ud.set("key", new Anything());
