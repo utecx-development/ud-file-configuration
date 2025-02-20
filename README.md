@@ -27,13 +27,13 @@ UD ud = UD.init("{your json string here}");
 > **<1>** this can be everything including premitives, java objects such as user profiles, lists and maps
 
 ```java
-ud.set("key", <1>);
+ud.set("key", new Anything());
 ```
 
 > here you you see a demenstration of the usage
   
 ```java
-ud.get("key", <1>.class);
+ud.get("key", Anything.class);
 ```
 > the boolean is used to force the save even tho nothing was changed (according to the file system). please use true if you work with immutables like maps or lists here!
 ```java
